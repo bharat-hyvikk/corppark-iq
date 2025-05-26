@@ -65,6 +65,7 @@
     </style>
 </head>
 <body>
+    <h1 style="text-align: center;">Office Name: {{ $officeName }}</h1>
     <table>
         @foreach ($qrCodes->chunk(5) as $chunk)
             <tr>
@@ -72,7 +73,7 @@
                     <td>
                         <div class="qr-code">
                             <img src="{{ Storage::Url($vehicle->qr_code) }}" alt="QR Code">
-                            <p>{{ Str::limit($vehicle->vehicle->name, 21, '...') }}</p>
+                            <h2>{{ $vehicle->vehicle->vehicle_number}}</h2>
                         </div>
                     </td>
                 @endforeach

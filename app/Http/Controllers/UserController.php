@@ -62,14 +62,13 @@ class  UserController extends Controller
                 'email' => 'required|email|unique:users,email',
                 'password' => [
                     'required',
-                    'min:8',
-                    'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/'
+                    'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{10,}$/'
                 ],
                 'phone' => 'required|numeric|digits:10|unique:users,phone'
             ],
             [
                 'password.required' => 'The password field is required.',
-                'password.min' => 'The password must be at least 8 characters.',
+                'password.min' => 'The password must be at least 10 characters.',
                 'password.regex' => 'The password must contain :<ul>
                 <li>Minimum 8 characters </li>
                 <li>At least one uppercase letter</li><li>At least one lowercase letter</li><li>At least one number</li><li>At least one special character</li></ul>',
@@ -175,14 +174,13 @@ class  UserController extends Controller
                 'email' => 'required|email|unique:users,email,' . $request->id,
                 'password' => [
                     'nullable',
-                    'min:8',
-                    'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/'
+                    'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{10,}$/'
                 ],
                 'phone' => 'required|numeric|digits:10|unique:users,phone,' . $request->id,
             ],
             [
                 'password.regex' => 'The password must contain :<ul>
-                <li>Minimum 8 characters </li>
+                <li>Minimum 10 characters </li>
                 <li>At least one uppercase letter</li><li>At least one lowercase letter</li><li>At least one number</li><li>At least one special character</li></ul>',
                 'phone.unique' => 'The phone number is already in use.',
 

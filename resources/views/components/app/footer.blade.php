@@ -46,7 +46,7 @@
 </style>
 <footer class="px-5" style="bottom: 0; position:sticky">
         <div class="d-flex align-items-start ">
-            <div class="mb-4">
+            <div class="mb-2">
                 <div class="copyright text-center text-xs text-muted text-lg-start">
                     Copyright
                     ©
@@ -57,7 +57,7 @@
                     {{-- <a href="https://www.creative-tim.com" class="text-secondary" target="_blank">Portal</a>. --}}
                 </div>
             </div>
-            <div class="mb-4 ms-auto">
+            <div class="mb-2 ms-auto">
                 <p class=" text-xs text-muted text-center">Powered By <a href="https://hyvikk.com/" class="text-reset" target="_blank" style="hover">
                          Hyvikk Solutions
                     </a>

@@ -42,9 +42,15 @@ class LoginController extends Controller
         $rememberMe = $request->rememberMe ? true : false;
         if (Auth::attempt($credentials, $rememberMe)) {
             // Authentication passed...
-             return redirect()->intended('/dashboard');
+            if (Auth::user()->user_type == 1) {
+                // Continue login (valid user)
+                return redirect()->intended('dashboard');
+            } else {
+                // Invalid user type, logout
+                Auth::logout();
+                return redirect()->back()->withErrors(['message'=> 'You can not use this portal.']);
+            }
         }
-
         return back()->withErrors([
             'message' => 'The provided credentials do not match our records.',
         ])->withInput($request->only('email'));

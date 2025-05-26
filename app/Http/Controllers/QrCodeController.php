@@ -100,8 +100,7 @@ class QrCodeController extends Controller
             {
                 do {
                     // Generate a random 4-digit number
-                    $code = random_int(1000000000, 9999999999); // 10-digit number
-
+                    $code = rand(1000, 9999);
                     // Check if the code already exists in the database (assuming Vehicle as the model)
                     $exists = QrCode::where('unique_code', $code)->exists();  // Change 'Vehicle' to your model
 

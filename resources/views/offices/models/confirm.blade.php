@@ -3,7 +3,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title text-capitalize" id="deleteModalLabel" ></h5>
+                <h5 class="modal-title text-capitalize" id="deleteModalLabel"></h5>
                 <button type="button" class="btn-close bg-secondary" data-bs-dismiss="modal"
                     aria-label="Close"></button>
             </div>
@@ -26,9 +26,9 @@
         let toastTimeout; // Declare a variable to hold the timeout ID    
         $(document).on('click', '.delete-item', function() {
             deletedealer = $(this).data('id'); // Get the Office ID
-             let name=$(this).data("name");
-             console.log(name);
-             $('#deleteModalLabel').text(`Delete Office : ${name}`);
+            let name = $(this).data("name");
+            console.log(name);
+            $('#deleteModalLabel').text(`Delete Office : ${name}`);
             $('#deleteModal').modal('show'); // Show the modal
         });
         $('#confirmDelete').click(function(e) {
@@ -50,13 +50,13 @@
                     filter: filter,
                     standardId: standardId // Added standard ID here
                 },
-                  headers: {
+                headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
                 success: function(response) {
                     $("#pageHeaderText").text(response.total);
                     $("#tableContainer").html(response.table);
-                    $("#paginationContainer").html(response.pagination);               
+                    $("#paginationContainer").html(response.pagination);
                     $('#deleteModal').modal('hide'); // Hide the modal
                     $("#successMsgCustom").text(response.message).show();
                     setTimeout(() => {
@@ -64,9 +64,9 @@
                     }, 3000);
                 },
                 error: function(xhr, status, error) {
-                    let errors = xhr.responseJSON.errors;
-
-                    $("#errorMsgCustom").text("Failed to delete Office");
+                    error = xhr.responseJSON.error;
+                     $('#deleteModal').modal('hide'); // Hide the modal
+                    $("#errorMsgCustom").text(error).show();
                     setTimeout(() => {
                         $("#errorMsgCustom").text('').hide();
                     }, 3000);

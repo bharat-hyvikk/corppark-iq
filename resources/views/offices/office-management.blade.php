@@ -1,6 +1,6 @@
 <x-app-layout>
 
-    <main class="main-content d-flex flex-column min-vh-100 position-relative max-height-vh-100 h-100 border-radius-lg ">
+    <main class="main-content d-flex flex-column position-relative border-radius-lg ps min-vh-100 ">
         <div class="navbar-container flex-shrink-0">
             <x-app.navbar pageName="Office Management" />
         </div>

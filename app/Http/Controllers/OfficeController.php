@@ -50,18 +50,6 @@ class  OfficeController extends Controller
      */
     public function store(Request $request)
     {
-        //
-        //         // Validate the request data
-        //         - id => bigint
-        // - office_number => varchar
-        // - office_name => varchar
-        // - owner_email => varchar
-        // - owner_name => varchar
-        // - owner_phone_number => varchar
-        // - vehicle_limit => int
-        // - created_at => timestamp
-        // - updated_at => timestamp
-        // - deleted_at => timestamp
         $request->validate(
             [
                 'name' => 'required|string|max:255',
@@ -147,9 +135,6 @@ class  OfficeController extends Controller
      */
     public function update(Request $request)
     {
-        //
-
-
         // validate data just like in store method
         $request->validate(
             [
@@ -216,6 +201,10 @@ limit.min' => 'The vehicle limit must be at least 1.',
         $office = Office::find($request->id);
         if (!$office) {
             return response()->json(['error' => 'Office not found'], 404);
+        }
+        $vehicles = $office->vehicles;
+        if ($vehicles->count() > 0) {
+            return response()->json(['error' => 'Cannot delete office with vehicles.'], 400);
         }
         $office->delete();
         $search = $request->search;

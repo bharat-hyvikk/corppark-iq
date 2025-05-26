@@ -78,10 +78,24 @@ class  VehicleController extends Controller
     {
         //
         // Validate the request data
+        // : Vehicles can be registered only if the office limit is not exceeded.
+        $office = Office::find($request->office_id);
+        if (!$office) {
+            return response()->json(['error' => 'Office not found'], 404);
+        }
+
         $request->validate(
             [
                 'vehicle_number' => 'required|string|max:255|unique:vehicles,vehicle_number',
-                'office_id' => 'required|exists:offices,id',
+                'office_id' => [
+                    "required",
+                    "exists:offices,id",
+                    function ($attribute, $value, $fail) use ($office) {
+                        if ($office->vehicles()->count() >= $office->vehicle_limit) {
+                            $fail('The office has reached its vehicle limit.');
+                        }
+                    }
+                ],
                 'phone' => 'required|numeric|digits:10'
             ],
             [
@@ -165,10 +179,23 @@ class  VehicleController extends Controller
     public function update(Request $request)
     {
         //
+        $vehicle = Vehicle::find($request->id);
+        if (!$vehicle) {
+            return response()->json(['error' => 'Vehicle not found'], 404);
+        }
+        $office = Office::find($request->office_id);
         $request->validate(
             [
                 'vehicle_number' => 'required|string|max:255|unique:vehicles,vehicle_number,' . $request->id,
-                'office_id' => 'required|exists:offices,id',
+                'office_id' => [
+                    "required",
+                    "exists:offices,id",
+                    function ($attribute, $value, $fail) use ($office, $vehicle) {
+                        if ($office->vehicles()->count() >= $office->vehicle_limit && $office->id != $vehicle->office_id) {
+                            $fail('The office has reached its vehicle limit.');
+                        }
+                    }
+                ],
                 'phone' => 'required|numeric|digits:10'
             ],
             [
