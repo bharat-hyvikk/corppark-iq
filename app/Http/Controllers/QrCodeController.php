@@ -100,7 +100,7 @@ class QrCodeController extends Controller
             {
                 do {
                     // Generate a random 4-digit number
-                    $code = random_int(100000, 999999);
+                    $code = random_int(1000000000, 9999999999); // 10-digit number
 
                     // Check if the code already exists in the database (assuming Vehicle as the model)
                     $exists = QrCode::where('unique_code', $code)->exists();  // Change 'Vehicle' to your model
@@ -113,10 +113,9 @@ class QrCodeController extends Controller
                 $unique_code = generateUniqueCode();
                 // if (extension_loaded('imagick')) {
                 // $qrCodeSvg = FacadesQrCode::format('svg')->size(512)->backgroundColor(0, 0, 0, 0)->generate($url);
-                $qrCodeSvg = FacadesQrCode::format('svg')->size(512)->backgroundColor(255, 255, 255)->generate($unique_code);
-
+                $qrCodeSvg = FacadesQrCode::format('png')->size(512)->backgroundColor(255, 255, 255)->generate($unique_code);
                 // $filePath = "branded-qr-codes/{$office->slug}/{$vehicle->slug}.svg";
-                $filePath = "qr-codes/{$office->office_name}/{$vehicle->vehicle_number}.svg";
+                $filePath = "qr-codes/{$office->office_name}/{$vehicle->vehicle_number}.png";
                 Storage::disk('public')->put($filePath, $qrCodeSvg);
                 QrCode::create([
                     'vehicle_id' => $vehicle->id,
@@ -126,10 +125,9 @@ class QrCodeController extends Controller
                 ]);
             }
             $totalcount = $vehicles->count();
-        return back()->with('Success', "total $totalcount QR codes generated  successfully.");
+            return back()->with('Success', "total $totalcount QR codes generated  successfully.");
         }
         return back()->withInput()->with('noVehicle', "Select an office to generate QR.");
-        
     }
     public function downloadQrCode(Request $request)
     {

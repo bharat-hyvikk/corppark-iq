@@ -44,7 +44,7 @@
     /* position:fixed; */
 /* } */
 </style>
-<footer class="px-5" style="bottom: 0; width: 100%; background-color: #f8f9fa; position:fixed">
+<footer class="px-5" style="bottom: 0; position:sticky">
         <div class="d-flex align-items-start ">
             <div class="mb-4">
                 <div class="copyright text-center text-xs text-muted text-lg-start">
