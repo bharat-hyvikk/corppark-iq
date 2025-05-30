@@ -202,7 +202,7 @@
                                         @endforeach
                                     </select>
                                 </div>
-                                <div class="d-sm-flex align-items-start border-top">
+                                {{-- <div class="d-sm-flex align-items-start border-top">
                                     <!-- Changed align-items-center to align-items-start for vertical alignment -->
                                     <div class="me-auto"> <!-- Added me-auto to push the select office section down -->
                                         <h6 class="font-weight-semibold text-lg mb-0"> QR list</h6>
@@ -230,7 +230,7 @@
                                                 QR</span>
                                         </button>
                                     </div>
-                                </div>
+                                </div> --}}
                             </div>
                         </div>
                     </div>

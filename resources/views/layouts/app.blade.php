@@ -11,7 +11,7 @@
         integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" crossorigin="anonymous"></script>
-    <link rel="icon" type="image/png" href="{{ asset('assets/img/max-logo(1).svg') }}">
+    <link rel="icon" type="image/png" href="{{ asset('assets/img/favicon.svg') }}">
     <title>{{ config('app.name') }}</title>
     <!--     Fonts and icons     -->
     <link

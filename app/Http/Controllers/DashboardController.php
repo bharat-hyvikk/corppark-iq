@@ -27,7 +27,7 @@ class DashboardController extends Controller
         $totalRemaining = $totalLimit - $totalParked;
         $recentInsideVehicles = Vehicle::where('check_in_status', 'Parked')
             ->whereNotNull('check_in_time')
-            ->orderByDesc('check_in_time')
+            ->orderBy('check_in_time','desc')
             ->limit(5)
             // ->with('office')
             ->get();
@@ -38,7 +38,7 @@ class DashboardController extends Controller
 
         $recentOutsideVehicles = Vehicle::where('check_in_status', 'Not Parked')
             ->whereNotNull('check_out_time')
-            ->orderByDesc('check_out_time')
+            ->orderBy('check_out_time','desc')
             ->limit(5)
             // ->with('office')
             ->get();

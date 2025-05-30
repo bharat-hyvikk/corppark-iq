@@ -41,7 +41,7 @@ class VehicleController extends Controller
             $vehicle->check_out_time = null;
         } else {
             $vehicle->check_out_time = now();
-            $vehicle->check_in_time = null;
+            // $vehicle->check_in_time = null;
         }
         $vehicle->check_in_status = $request->input('status');
         $vehicle->save();

@@ -50,7 +50,7 @@
         <meta name="data-turbolinks-track" content="false">
     @endif
     <link rel="apple-touch-icon" sizes="76x76" href="../assets/img/apple-icon.png">
-    <link rel="icon" type="image/png" href="{{ asset('assets/img/max-logo(1).svg') }}">
+    <link rel="icon" type="image/png" href="{{ asset('assets/img/favicon.svg') }}">
      <link
             rel="stylesheet"
             href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"

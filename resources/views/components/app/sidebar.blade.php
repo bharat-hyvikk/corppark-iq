@@ -4,7 +4,7 @@
             aria-hidden="true" id="iconSidenav"></i>
         <a class="navbar-brand d-flex align-items-center m-0" href="{{ route('dashboard') }}" target="_self">
             <div class="d-flex flex-column align-items-center">
-            <img src="{{ asset('assets/img/max-logo(1).svg') }}" style="width: 100%; height:100%;object-fit:cover" class="pb-1">
+            <img src="{{ asset('assets/img/corppark-logo.svg') }}" style="width: 59%; height:100%;object-fit:cover" class="pb-1">
             </div>
         </a>
     </div>

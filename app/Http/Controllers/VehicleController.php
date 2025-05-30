@@ -80,9 +80,7 @@ class  VehicleController extends Controller
         // Validate the request data
         // : Vehicles can be registered only if the office limit is not exceeded.
         $office = Office::find($request->office_id);
-        if (!$office) {
-            return response()->json(['error' => 'Office not found'], 404);
-        }
+       
 
         $request->validate(
             [

@@ -30,6 +30,7 @@ class QrCodeController extends Controller
             if (!$office) {
                 return redirect()->route('branded-qr.index')->with('error', 'Office not found');
             }
+            $vehicleCount=$office->vehicles->count();
             $qrs = Vehicle::whereHas('office', function ($query) use ($office) {
                 $query->where('office_id', $office->id);
             })->with('qrCode')->latest();
@@ -88,9 +89,15 @@ class QrCodeController extends Controller
             if ($selectedAll === "true") {
                 $excludedBookIds = array_merge($deselectedVehicles, $vehiclesWithQRCodeIds);
                 $vehicles = Vehicle::whereNotIn('id', $excludedBookIds)
+                    ->whereHas('office', function ($query) use ($office) {
+                        $query->where('office_id', $office->id);
+                    })
                     ->get();
             } else {
                 $vehicles = Vehicle::whereIn('id', $selectedVehicles)
+                    ->whereHas('office', function ($query) use ($office) {
+                        $query->where('office_id', $office->id);
+                    })
                     ->get();
             }
             if ($vehicles->isEmpty()) {
@@ -99,8 +106,8 @@ class QrCodeController extends Controller
             function generateUniqueCode()
             {
                 do {
-                    // Generate a random 4-digit number
-                    $code = rand(1000, 9999);
+                    // Generate a random 6-digit number
+                    $code = rand(100000, 999999);
                     // Check if the code already exists in the database (assuming Vehicle as the model)
                     $exists = QrCode::where('unique_code', $code)->exists();  // Change 'Vehicle' to your model
 
@@ -113,8 +120,8 @@ class QrCodeController extends Controller
                 // if (extension_loaded('imagick')) {
                 // $qrCodeSvg = FacadesQrCode::format('svg')->size(512)->backgroundColor(0, 0, 0, 0)->generate($url);
                 $qrCodeSvg = FacadesQrCode::format('png')->size(512)->backgroundColor(255, 255, 255)->generate($unique_code);
-                // $filePath = "branded-qr-codes/{$office->slug}/{$vehicle->slug}.svg";
-                $filePath = "qr-codes/{$office->office_name}/{$vehicle->vehicle_number}.png";
+                $randomName = uniqid("4");
+                $filePath = "qr-codes/{$office->office_name}/{$vehicle->vehicle_number}_{$randomName}.png";
                 Storage::disk('public')->put($filePath, $qrCodeSvg);
                 QrCode::create([
                     'vehicle_id' => $vehicle->id,

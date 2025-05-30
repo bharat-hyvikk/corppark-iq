@@ -53,12 +53,13 @@
                                         class="btn btn-sm btn-icon d-flex align-items-center me-2" id="addModalBtn"
                                         style="background-color:#735bfc">
                                         <span class="btn-inner--icon d-flex flex-row align-items-center me-2">
-                                                <!-- Changed to flex-column for vertical stacking -->
-                                                <i class="fa-sharp fa-solid far fas fa-car-side"
-                                                    style="font-size: 0.75rem;margin-right:15%; color:#fff;"></i>
-                                                <!-- Book icon below -->
-                                                <i class="fa-sharp fa-solid fa-plus" style="color:#fff;"></i> <!-- Plus icon on top -->
-                                            </span>
+                                            <!-- Changed to flex-column for vertical stacking -->
+                                            <i class="fa-sharp fa-solid far fas fa-car-side"
+                                                style="font-size: 0.75rem;margin-right:15%; color:#fff;"></i>
+                                            <!-- Book icon below -->
+                                            <i class="fa-sharp fa-solid fa-plus" style="color:#fff;"></i>
+                                            <!-- Plus icon on top -->
+                                        </span>
                                         <span class="btn-inner--text" style="color:#fff">Add Vehicle</span>
                                     </button>
                                 </div>
@@ -88,7 +89,7 @@
                                     </div>
                                     <div class="col-auto">
                                         <select id="select_office" name="select_office" onchange="filterTable()"
-                                            class="form-select form-select-md" style="padding-right:40px;">
+                                            class="form-select form-select-md" style="padding-right:50px;">
                                             <option value="" class="text-left">All</option>
                                             @foreach ($offices as $office)
                                                 <option value="{{ $office->id }}">{{ $office->office_name }}</option>
@@ -100,15 +101,14 @@
                                     aria-label="Basic radio toggle button group">
                                     <input type="radio" class="btn-check" name="status_rdo" id="reset_btn"
                                         autocomplete="off" value="" checked />
-                                    <label class="btn btn-white px-3 mb-0" for="reset_btn">ALL</label>
-
+                                    <label class="btn btn-white px-2 mb-0" for="reset_btn">ALL</label>
                                     <input type="radio" class="btn-check" name="status_rdo" id="btn_disabled"
                                         autocomplete="off" value="Parked" />
-                                    <label class="btn btn-white px-3 mb-0" for="btn_disabled">Inside</label>
+                                    <label class="btn btn-white px-2 mb-0" for="btn_disabled">Parked</label>
 
                                     <input type="radio" class="btn-check" name="status_rdo" id="btn_aso"
                                         autocomplete="off" value="Not Parked" />
-                                    <label class="btn btn-white px-3 mb-0" for="btn_aso">Outside</label>
+                                    <label class="btn btn-white px-2 mb-0" for="btn_aso">Not Parked</label>
                                 </div>
                                 <div class="input-group w-sm-25  grid grid-cols-1">
                                     <span class="input-group-text text-body">
@@ -177,7 +177,7 @@
         let searchInput = $('#search').val().toLowerCase();
         let itemsPerPage = $('#itemsPerPage').val();
         //get the select office value
-         selectOffice = $('#select_office').val();
+        selectOffice = $('#select_office').val();
         //get ship name selectship
         let shipName = $('#selectship').val();
         //get the btnradiotable value

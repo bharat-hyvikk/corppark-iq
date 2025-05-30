@@ -74,12 +74,12 @@
                 },
                 success: function(response) {
                     console.log(response);
-                    $("[name='name']").val(response.Office.office_name);
-                    $("[name='owner_name']").val(response.Office.owner_name);
-                    $("[name='email']").val(response.Office.owner_email);
-                    $("[name='phone']").val(response.Office.owner_phone_number);
-                    $("[name='office_number']").val(response.Office.office_number);
-                    $("[name='vehicle_limit']").val(response.Office.vehicle_limit);
+                    $("#updateForm [name='name']").val(response.Office.office_name);
+                    $("#updateForm [name='owner_name']").val(response.Office.owner_name);
+                    $("#updateForm [name='email']").val(response.Office.owner_email);
+                    $("#updateForm [name='phone']").val(response.Office.owner_phone_number);
+                    $("#updateForm [name='office_number']").val(response.Office.office_number);
+                    $("#updateForm [name='vehicle_limit']").val(response.Office.vehicle_limit);
 
                     $("#editOfficeModal").modal("show");
 

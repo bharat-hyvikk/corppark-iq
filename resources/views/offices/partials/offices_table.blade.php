@@ -5,16 +5,16 @@
                 Office Name
             </th>
             <th class="text-secondary text-xs font-weight-semibold opacity-7">
-               Total Vehicles
-            </th>
-            <th class="text-secondary text-xs font-weight-semibold opacity-7">
                 Office Number
             </th>
             <th class="text-secondary text-xs font-weight-semibold opacity-7">
-                Owner Name
+               Total Vehicles
             </th>
             <th class="text-secondary text-xs font-weight-semibold opacity-7">
                 Vehicle Limit
+            </th>
+            <th class="text-secondary text-xs font-weight-semibold opacity-7">
+                Owner Name
             </th>
             <th class="text-secondary text-xs font-weight-semibold opacity-7">
                 Phone No
@@ -40,6 +40,11 @@
                         </div>
                     </div>
                 </td>
+                <td class="align-middle text-start text-sm">
+                    <p class="text-sm text-dark font-weight-semibold mb-0 email ps-3">
+                        {{ $Office->office_number }}
+                    </p>
+                </td>
                  <td class="align-middle text-center text-sm">
                     @if ($Office->vehicles_count == 0)
                         <span
@@ -49,19 +54,23 @@
                             class="badge badge-sm border border-success text-success bg-success">{{ $Office->vehicles_count }}</span>
                     @endif
                 </td>
-                <td class="align-middle text-start text-sm">
-                    <p class="text-sm text-dark font-weight-semibold mb-0 email ps-3">
-                        {{ $Office->office_number }}
-                    </p>
+                 <td class="align-middle text-center text-sm">
+                    @if ($Office->vehicle_limit == 0)
+                        <span
+                            class="badge badge-sm border border-danger text-danger bg-danger">{{ $Office->vehicle_limit ?? '0' }}</span>
+                    @else
+                        <span
+                            class="badge badge-sm border border-success text-success bg-success">{{ $Office->vehicle_limit }}</span>
+                    @endif
                 </td>
+                {{-- <td class="align-middle text-start text-sm">
+                    <p class="text-sm text-dark font-weight-semibold mb-0 email ps-3">
+                        {{ $Office->vehicle_limit }}
+                    </p>
+                </td> --}}
                 <td class="align-middle text-start text-sm">
                     <p class="text-sm text-dark font-weight-semibold mb-0 email ps-3">
                         {{ $Office->owner_name }}
-                    </p>
-                </td>
-                <td class="align-middle text-start text-sm">
-                    <p class="text-sm text-dark font-weight-semibold mb-0 email ps-3">
-                        {{ $Office->vehicle_limit }}
                     </p>
                 </td>
 

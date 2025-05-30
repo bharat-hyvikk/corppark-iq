@@ -2,7 +2,7 @@
     <div class="container-fluid px-1">
         <div class="d-flex justify-content-center w-100">
             <div class="navbar-brand font-weight-bolder">
-                Max Digital and Services
+                {{ config('app.name') }}
             </div>
         </div>
         {{-- <button class="navbar-toggler shadow-none ms-2" type="button" data-bs-toggle="collapse"

@@ -10,7 +10,7 @@
             <th class="text-secondary text-xs font-weight-semibold opacity-7">
                 Owner Number
             </th>
-            <th class="text-secondary text-xs font-weight-semibold opacity-7 ps-3">
+            <th class="text-secondary text-xs font-weight-semibold opacity-7 ps-2">
                 Check In Status
             </th>
             <th class="text-secondary text-xs font-weight-semibold opacity-7">
@@ -50,10 +50,19 @@
                         {{ $vehicle->owner_phone }}
                     </p>
                 </td>
-                <td class="align-middle text-start text-sm">
+                {{-- <td class="align-middle text-start text-sm">
                     <p class="text-sm text-dark font-weight-semibold mb-0 operating_type ps-2">
                         {{ $vehicle->check_in_status }}
                     </p>
+                </td> --}}
+                 <td class="align-middle text-start text-sm">
+                    @if ($vehicle->check_in_status == "Not Parked")
+                        <span
+                            class="badge badge-sm border border-danger text-danger bg-danger w-60">{{ $vehicle->check_in_status  }}</span>
+                    @else
+                        <span
+                            class="badge badge-sm border border-success text-success bg-success w-60">{{ $vehicle->check_in_status }}</span>
+                    @endif
                 </td>
                 <td class="align-middle text-start text-sm">
                     <p class="text-sm text-dark font-weight-semibold mb-0 email ps-3">

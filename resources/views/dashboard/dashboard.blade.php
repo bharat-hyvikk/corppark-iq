@@ -147,7 +147,7 @@
                                 <div class="col-12">
                                     <div class="w-100">
                                         <p class="text-sm text-secondary mb-1">
-                                            Total Unparked
+                                            Total Remaining
                                         </p>
                                         <h4 class="mb-2 font-weight-bold">
                                             {{ $totalRemaining }}
@@ -164,9 +164,7 @@
                     <div class="card shadow-xs border h-100">
                         <div class="card-header pb-0">
                             <h6 class="font-weight-semibold text-lg mb-0">Vehicles and their QR Code Analysis</h6>
-                            <p class="text-sm">Below are the details of total No of Vehicles and total No of  QR
-                                codes
-                                generated </p>
+                            <p class="text-sm">Below are the details of total no of Vehicles With Generated QR Code and total No of vehicles Without QR Code </p>
 
                         </div>
                         <div class="card-body py-3">
@@ -245,10 +243,10 @@
         new Chart(ctx1, {
             type: 'pie',
             data: {
-                labels: ['Total Vehicles', 'Total  QR Generated'],
+                labels: ['Vehicles Without QR', 'Vehicles  With QR'],
                 datasets: [{
                     label: 'Total Count',
-                    data: [@json($totalVehicles), @json($totalQrGenerated)], // Pass PHP values
+                    data: [@json($totalVehicles-$totalQrGenerated), @json($totalQrGenerated)], // Pass PHP values
                     backgroundColor: ['#FF4069', '#36A2EB'],
                     hoverOffset: 4
                 }]

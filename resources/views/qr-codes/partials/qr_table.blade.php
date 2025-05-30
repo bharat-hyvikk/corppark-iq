@@ -5,9 +5,9 @@
             <th class="text-secondary text-xs font-weight-semibold opacity-7">Vehicle Number
             </th>
             <th class="text-center text-secondary text-xs font-weight-semibold opacity-7">
-                QR Image</th>
+              View QR </th>
             <th class="text-center text-secondary text-xs font-weight-semibold opacity-7 ps-2">
-                Action</th>
+                Download QR</th>
         </tr>
     </thead>
     <tbody id="qr_table_body">
@@ -39,7 +39,7 @@
                 <td class="text-center align-middle">
                     @if ($qrcode->qrCode)
                         <i class="fa-solid fa-file-image media-icon cursor-pointer" style="font-size: 25px;"
-                            data-media-src="{{ Storage::url($qrcode->qrCode->qr_code) }}" data-id="{{ $qrcode->id }}"
+                            data-media-src="{{ Storage::disk("public")->url($qrcode->qrCode->qr_code) }}" data-id="{{ $qrcode->id }}"
                             data-vehicle-number="{{ $qrcode->vehicle_number }}" data-bs-toggle="tooltip"
                             data-bs-title="View QR"></i>
                     @else
@@ -49,7 +49,7 @@
                 </td>
                 <td class="text-center align-middle">
                     @if ($qrcode->qrCode)
-                        <a href="{{ Storage::url($qrcode->qrCode->qr_code) }}"
+                        <a href="{{ Storage::disk("public")->url($qrcode->qrCode->qr_code) }}"
                             class="text-secondary font-weight-bold text-xs mx-2" data-bs-toggle="tooltip"
                             data-bs-title="Download QR" download>
                             <i class="fa-sharp fa-solid fa-download" style="font-size:17px;"></i>

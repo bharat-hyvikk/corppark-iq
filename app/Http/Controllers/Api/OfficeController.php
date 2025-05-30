@@ -40,7 +40,7 @@ class OfficeController extends Controller
         }
         $officeId = $qrCode->office_id;
         $office = \App\Models\Office::find($officeId);
-        $space_occupied = $office->vehicles()->count();
+        $space_occupied = Vehicle::where('check_in_status', 'Parked')->count();
         $space_left = $office->vehicle_limit - $space_occupied;
         $office->space_occupied = $space_occupied;
         $office->space_left = $space_left;
@@ -82,7 +82,7 @@ class OfficeController extends Controller
             return response()->json(['error' => 'Office not found'], 404);
         }
         $vehicles = $office->vehicles()->get();
-        $space_occupied = $office->vehicles()->count();
+        $space_occupied = Vehicle::where('check_in_status', 'Parked')->count();
         $space_left = $office->vehicle_limit - $space_occupied;
         $office->space_occupied = $space_occupied;
         $office->space_left = $space_left;

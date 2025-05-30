@@ -72,12 +72,11 @@ return [
             'days' => 14,
             'replace_placeholders' => true,
         ],
-         'daily_auto_check_in' => [
-            'driver' => 'daily',
-        'path' => storage_path('logs/daily-auto-check-in/' . date('d-m-Y') . '/laravel.log'),
+        'daily_auto_check_in' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/daily-auto-check-in/daily-auto-check-in-' . date('Y-m-d') . '.log'),
             'level' => 'info',
         ],
-        
 
         'slack' => [
             'driver' => 'slack',

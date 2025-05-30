@@ -35,8 +35,12 @@ class ResetCheckIn extends Command
             $vehicle->save();
 
             // Log the reset action vehicle id vehicle name vehicle office name 
-            Log::channel('daily_auto_check_in')->info('Reset check-in status for vehicle ID: ' . $vehicle->id . ' - ' . $vehicle->vehicle_name . ' - ' . $vehicle->office->office_name);
-
+            Log::channel('daily_auto_check_in')->info(
+                'Reset check-in status for Vehicle ID: ' . $vehicle->id .
+                    ' | Vehicle Number: ' . $vehicle->vehicle_number .
+                    ' | Owner Phone: ' . $vehicle->owner_phone .
+                    ' | Office Name: ' . $vehicle->office->office_name
+            );
         }
         $this->info('Check-in status reset for all parked vehicles.');
         return 0;
