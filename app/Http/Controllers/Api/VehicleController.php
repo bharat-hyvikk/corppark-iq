@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Vehicle;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 class VehicleController extends Controller
@@ -43,6 +44,15 @@ class VehicleController extends Controller
             $vehicle->check_out_time = now();
             // $vehicle->check_in_time = null;
         }
+        // log the check-in status change
+        Log::channel('daily_check_in')->info(
+            'Vehicle ID: ' . $vehicle->id .
+                ' | Vehicle Number: ' . $vehicle->vehicle_number .
+                ' | Owner Phone: ' . $vehicle->owner_phone .
+                ' | Check-in Status: ' . $request->input('status') .
+                ' | Office Name: ' . $vehicle->office->office_name.
+                 '|time: ' . now()->toDateTimeString()
+        );
         $vehicle->check_in_status = $request->input('status');
         $vehicle->save();
         return response()->json([

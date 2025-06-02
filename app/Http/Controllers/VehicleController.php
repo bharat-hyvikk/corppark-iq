@@ -97,12 +97,7 @@ class  VehicleController extends Controller
                 'phone' => 'required|numeric|digits:10'
             ],
             [
-                'vehicle_number.unique' => 'The vehicle number is already in use.',
-                'phone.unique' => 'The phone number is already in use.',
-                'office_id.exists' => 'The selected office is invalid.',
-                'phone.digits' => 'The Owner phone number must be 10 digits.',
-                'phone.numeric' => 'The Owner phone number must be a number.',
-                'vehicle_number.required' => 'The vehicle number is required.',
+                
             ]
         );
         // Create a new vehicle

@@ -34,6 +34,9 @@ class ApiAuthenticate
         if ($user->api_token !== $request->input('api_token')) {
             return response()->json(['message' => 'Unauthorized','success'=>'0'], 401);
         }
+        if ($user->active_login == 0) {
+            return response()->json(['message' => 'Unauthorized','success'=>'0'], 401);
+        }
         if ($user->status == "Inactive") {
             return response()->json(['message' =>'Your Account Is Inactive','success'=>'0'], 401);
         }

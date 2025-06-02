@@ -39,6 +39,7 @@ class LoginController extends Controller
             if (!$user->api_token) {
                 $user->api_token = Str::random(80);
             }
+            $user->active_login =  1;
             $user->save();
             /// add thes field in data array 'api_token' => $user->api_token,
             // "name" => $user->name,
@@ -67,7 +68,7 @@ class LoginController extends Controller
     public function logout(Request $request)
     {
         $user = User::find($request->id);
-        $user->api_token = null;
+        $user->active_login = 0;
         $user->save();
         return response()->json([
             'success' => 1,

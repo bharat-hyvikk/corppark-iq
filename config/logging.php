@@ -77,6 +77,11 @@ return [
             'path' => storage_path('logs/daily-auto-check-in/daily-auto-check-in-' . date('Y-m-d') . '.log'),
             'level' => 'info',
         ],
+        'daily_check_in' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/daily-check-in/' . date('Y-m-d') . '.log'),
+            'level' => 'info',
+        ],
 
         'slack' => [
             'driver' => 'slack',
