@@ -30,7 +30,7 @@ class QrCodeController extends Controller
             if (!$office) {
                 return redirect()->route('branded-qr.index')->with('error', 'Office not found');
             }
-            $vehicleCount=$office->vehicles->count();
+            $vehicleCount = $office->vehicles->count();
             $qrs = Vehicle::whereHas('office', function ($query) use ($office) {
                 $query->where('office_id', $office->id);
             })->with('qrCode')->latest();
@@ -135,15 +135,26 @@ class QrCodeController extends Controller
         }
         return back()->withInput()->with('noVehicle', "Select an office to generate QR.");
     }
-    public function downloadQrCode(Request $request)
+    public function downloadQrCode(Request $request, $qrId = null)
     {
-        $officeId = $request->id;
-        $officeName = Office::find($request->id)->office_name;
+        if ($qrId) {
+            $qrCode = QrCode::find($qrId);
+            $officeId = $qrCode->office_id;
+            $officeName = Office::find($officeId)->office_name;
+        } else {
+            $officeId = $request->officeId;
+            $officeName = Office::find($officeId)->office_name;
+        }
         if ($officeId) {
             $office = Office::find($request->id);
+            if($qrId){
+                $qrCodes=QrCode::where('id',$qrId)->with("vehicle")->get();
+            }
+            else{
             $qrCodes = QrCode::whereHas('office', function ($query) use ($office) {
                 $query->where('office_id', $office->id);
             })->with('vehicle')->get();
+            }
             if ($qrCodes->isEmpty()) {
                 return back()->withInput()->with('noBrandedBook', "No vehicles found to download QR.");
             }

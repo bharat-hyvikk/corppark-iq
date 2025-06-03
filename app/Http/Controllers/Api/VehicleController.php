@@ -50,8 +50,7 @@ class VehicleController extends Controller
                 ' | Vehicle Number: ' . $vehicle->vehicle_number .
                 ' | Owner Phone: ' . $vehicle->owner_phone .
                 ' | Check-in Status: ' . $request->input('status') .
-                ' | Office Name: ' . $vehicle->office->office_name.
-                 '|time: ' . now()->toDateTimeString()
+                ' | Office Name: ' . $vehicle->office->office_name
         );
         $vehicle->check_in_status = $request->input('status');
         $vehicle->save();

@@ -122,4 +122,4 @@ route::prefix('vehicles')
 // ** Qr Code Management
 Route::get('/qr-code', [QrCodeController::class, 'index'])->name('qrcode.index')->middleware("auth");
 Route::get('/generate-qrcode', [QrCodeController::class, 'generateQrCode'])->name('qrcode.generate')->middleware("auth");
-Route::get('/download-qrcode', [QrCodeController::class, 'downloadQrCode'])->name('qrcode.download')->middleware("auth");
+Route::get('/download-qrcode/{qrId?}', [QrCodeController::class, 'downloadQrCode'])->name('qrcode.download')->middleware("auth");

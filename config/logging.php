@@ -74,12 +74,12 @@ return [
         ],
         'daily_auto_check_in' => [
             'driver' => 'single',
-            'path' => storage_path('logs/daily-auto-check-in/daily-auto-check-in-' . date('Y-m-d') . '.log'),
+            'path' => storage_path('logs/daily-auto-check-in/'.date('Y').'/'.date('F').'/' . date('Y-m-d') . '.log'),
             'level' => 'info',
         ],
         'daily_check_in' => [
             'driver' => 'single',
-            'path' => storage_path('logs/daily-check-in/' . date('Y-m-d') . '.log'),
+            'path' => storage_path('logs/daily-check-in/'.date('Y').'/'.date('F').'/'. date('Y-m-d') . '.log'),
             'level' => 'info',
         ],
 

@@ -27,7 +27,7 @@ class ResetCheckIn extends Command
     public function handle()
     {
         //
-        $vehicles = \App\Models\Vehicle::where('check_in_status', 'Not Parked')->whereNull("check_out_time")->get();
+        $vehicles = \App\Models\Vehicle::where('check_in_status', 'Parked')->whereNull("check_out_time")->get();
         foreach ($vehicles as $vehicle) {
             $vehicle->check_in_status = 'Not Parked';
             $vehicle->check_in_time = null;

@@ -48,6 +48,20 @@
                     @endif
                 </td>
                 <td class="text-center align-middle">
+
+                    @if ($qrcode->qrCode)
+
+                        <a href="{{route('qrcode.download', $qrcode->id)}}"
+                            class="text-secondary font-weight-bold text-xs mx-2" data-bs-toggle="tooltip"
+                            data-bs-title="Download QR" >
+                            <i class="fa-sharp fa-solid fa-download" style="font-size:17px;"></i>
+                        </a>
+                    @else
+                        <img src="{{ asset('assets/img/Icon SVG-03 1 (1).svg') }}" width="20px" height="15px"
+                            data-bs-toggle="tooltip" data-bs-title="QR not available" style="cursor: not-allowed;">
+                    @endif
+                </td>
+                {{-- <td class="text-center align-middle">
                     @if ($qrcode->qrCode)
                         <a href="{{ Storage::disk("public")->url($qrcode->qrCode->qr_code) }}"
                             class="text-secondary font-weight-bold text-xs mx-2" data-bs-toggle="tooltip"
@@ -58,7 +72,7 @@
                         <img src="{{ asset('assets/img/Icon SVG-03 1 (1).svg') }}" width="20px" height="15px"
                             data-bs-toggle="tooltip" data-bs-title="QR not available" style="cursor: not-allowed;">
                     @endif
-                </td>
+                </td> --}}
             </tr>
         @endforeach
     </tbody>
