@@ -121,7 +121,8 @@ class QrCodeController extends Controller
                 // $qrCodeSvg = FacadesQrCode::format('svg')->size(512)->backgroundColor(0, 0, 0, 0)->generate($url);
                 $qrCodeSvg = FacadesQrCode::format('png')->size(512)->backgroundColor(255, 255, 255)->generate($unique_code);
                 $randomName = uniqid("4");
-                $filePath = "qr-codes/{$office->office_name}/{$vehicle->vehicle_number}_{$randomName}.png";
+                $sanitizedOfficeName = str_replace(' ', '_', $office->office_name);
+                $filePath = "qr-codes/{$sanitizedOfficeName}/{$vehicle->vehicle_number}_{$randomName}.png";
                 Storage::disk('public')->put($filePath, $qrCodeSvg);
                 QrCode::create([
                     'vehicle_id' => $vehicle->id,
@@ -146,7 +147,7 @@ class QrCodeController extends Controller
             $officeName = Office::find($officeId)->office_name;
         }
         if ($officeId) {
-            $office = Office::find($request->id);
+            $office = Office::find($request->officeId);
             if($qrId){
                 $qrCodes=QrCode::where('id',$qrId)->with("vehicle")->get();
             }

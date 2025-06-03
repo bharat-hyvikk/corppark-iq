@@ -93,7 +93,7 @@
                                         <p class="text-sm">See information about all QR</p>
                                     </div>
                                     <div class="ms-auto d-flex mt-3">
-                                        <a href="{{ route('qrcode.download', ['officeName' => request()->route('officeName'), 'id' => request()->query('id')]) }}"
+                                        <a href="{{ route('qrcode.download', ['officeName' => request()->route('officeName'), 'officeId' => request()->query('id')]) }}"
                                             class="btn btn-sm btn-dark btn-icon me-2">
                                             <span class="btn-inner--icon">
                                                 <i class="fa-sharp fa-solid fa-download"
