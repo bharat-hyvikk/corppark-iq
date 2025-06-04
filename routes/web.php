@@ -123,3 +123,13 @@ route::prefix('vehicles')
 Route::get('/qr-code', [QrCodeController::class, 'index'])->name('qrcode.index')->middleware("auth");
 Route::get('/generate-qrcode', [QrCodeController::class, 'generateQrCode'])->name('qrcode.generate')->middleware("auth");
 Route::get('/download-qrcode/{qrId?}', [QrCodeController::class, 'downloadQrCode'])->name('qrcode.download')->middleware("auth");
+
+// privacy policy 
+Route::get('/privacy-policy', function () {
+    return view('privacy');
+})->name('privacy-policy');
+
+// contact us 
+Route::get('/contact-us', function () {
+    return view('contact');
+})->name('contact-us');

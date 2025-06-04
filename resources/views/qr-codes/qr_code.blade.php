@@ -71,7 +71,7 @@
                                     <div class="col-6"> <!-- Set the width to 50% using col-6 -->
                                         <h6 class="font-weight-semibold text-lg mb-0">Select Office</h6>
                                         <select id="office-select" class="form-select" style="margin-bottom:2%;">
-                                            <option value="">Select office</option>
+                                            <option value="all">All Office</option>
                                             @foreach ($offices as $office)
                                                 <option value="{{ $office->id }}" data-slug="{{ $office->slug }}"
                                                     {{ request()->query('id') == $office->id ? 'selected' : '' }}>
@@ -193,7 +193,8 @@
                                 <div class="col-6"> <!-- Set the width to 50% using col-6 -->
                                     <h6 class="font-weight-semibold text-lg mb-0">Select Office</h6>
                                     <select id="office-select" class="form-select" style="margin-bottom:2%;">
-                                        <option value="">Select office</option>
+                                        <option value="" disabled selected>Select office</option>
+                                        <option value="all">All Office</option>
                                         @foreach ($offices as $office)
                                             <option value="{{ $office->id }}" data-id="{{ $office->id }}"
                                                 data-slug="{{ $office->office_name }}"
@@ -241,13 +242,14 @@
     </main>
 </x-app-layout>
 <script>
+    // on document load append
     $(document).ready(function() {
         let selectedVehicles = [];
         $('#office-select').on('change', function() {
             var officeId = $(this).find(':selected').val(); //
             if (officeId) {
                 // Redirect to the route with the selected officeName (slug)
-                window.location.href = '{{ route('qrcode.index') }}'  + '?id=' +
+                window.location.href = '{{ route('qrcode.index') }}' + '?id=' +
                     officeId;
             }
         });
@@ -330,7 +332,7 @@
                 value: isChecked
             }).appendTo('#qrForm');
             $('#qrBtnText').text('Generating'); // Change button text to 'Generating...'
-             $('#qrForm').submit();
+            $('#qrForm').submit();
         });
         $(document).on('click', '.btn-check', function(e) {
             let filter = $('input[name="btnradiotable"]:checked').val();
