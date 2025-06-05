@@ -10,6 +10,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Admins\InvoiceMgmtController;
+use App\Http\Controllers\ContactUsController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\OfficeController;
 use App\Http\Controllers\VehicleController;
@@ -133,3 +134,6 @@ Route::get('/privacy-policy', function () {
 Route::get('/contact-us', function () {
     return view('contact');
 })->name('contact-us');
+
+// send email using contact us controller 
+Route::get('/send-email', [ContactUsController::class, 'sendEmail'])->name('send-email');

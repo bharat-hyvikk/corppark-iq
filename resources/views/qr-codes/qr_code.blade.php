@@ -61,117 +61,115 @@
             <div class="alert alert-danger w-100 text-center p-1 mb-2 search-fail" id="deleteFail"
                 style="display: none">
             </div>
-            @if (request()->id)
-                <div class="row">
-                    <div class="col-12">
-                        <div class="card border shadow-xs mb-4">
-                            <div class="card-header border-bottom pb-0">
-                                <div class="row">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card border shadow-xs mb-4">
+                        <div class="card-header border-bottom pb-0">
+                            <div class="row">
+                                <div class="col-6"> <!-- Set the width to 50% using col-6 -->
+                                    <h6 class="font-weight-semibold text-lg mb-0">Select Office</h6>
+                                    <select id="office-select" class="form-select" style="margin-bottom:2%;">
+                                        <option value="">All Office</option>
+                                        @foreach ($offices as $office)
+                                            <option value="{{ $office->id }}" data-slug="{{ $office->slug }}"
+                                                {{ request()->query('id') == $office->id ? 'selected' : '' }}>
+                                                {{ $office->office_name }}</option>
+                                        @endforeach
+                                    </select>
 
-                                    <div class="col-6"> <!-- Set the width to 50% using col-6 -->
-                                        <h6 class="font-weight-semibold text-lg mb-0">Select Office</h6>
-                                        <select id="office-select" class="form-select" style="margin-bottom:2%;">
-                                            <option value="all">All Office</option>
-                                            @foreach ($offices as $office)
-                                                <option value="{{ $office->id }}" data-slug="{{ $office->slug }}"
-                                                    {{ request()->query('id') == $office->id ? 'selected' : '' }}>
-                                                    {{ $office->office_name }}</option>
-                                            @endforeach
-                                        </select>
-
-                                    </div>
-                                    {{-- <div class="col-5 m-auto" style="margin-left: 5%">
+                                </div>
+                                {{-- <div class="col-5 m-auto" style="margin-left: 5%">
                                         <h6 class="font-weight-semibold text-lg mb-0 mt-4 mx-8">Total  QR:
                                             {{ $totalQrVehiclesCount }}</h6> <!-- Display total count -->
                                     </div> --}}
-                                </div>
+                            </div>
 
-                                <div class="d-sm-flex align-items-start border-top mt-2">
-                                    <!-- Changed align-items-center to align-items-start for vertical alignment -->
-                                    <div class="me-auto"> <!-- Added me-auto to push the select office section down -->
-                                        <h6 class="font-weight-semibold text-lg mb-0"> QR list</h6>
-                                        <p class="text-sm">See information about all QR</p>
-                                    </div>
-                                    <div class="ms-auto d-flex mt-3">
-                                        <a href="{{ route('qrcode.download', ['officeName' => request()->route('officeName'), 'officeId' => request()->query('id')]) }}"
-                                            class="btn btn-sm btn-dark btn-icon me-2">
-                                            <span class="btn-inner--icon">
-                                                <i class="fa-sharp fa-solid fa-download"
-                                                    style="font-size: 0.75rem; margin-right: 0.2rem;"></i>
-                                            </span>
-                                            <span class="btn-inner--text">Download Bulk QR</span>
-                                        </a>
-                                        <button type="submit"
-                                            class="btn btn-sm btn-dark btn-icon me-2 d-flex align-items-center"
-                                            data-bs-toggle="modal" data-bs-target="#generateQRModal">
-                                            <span class="btn-inner--icon">
-                                                <i class="fa-sharp fa-solid fa-qrcode" id="qrIcon"
-                                                    style="font-size: 0.75rem; margin-right: 0.2rem;"></i>
-                                            </span>
-                                            <i class="fa-solid fa-spinner fa-spin" id="qrSpinner"
-                                                style="display: none; font-size: 0.75rem; margin-right: 0.2rem;"></i>
-                                            <span class="btn-inner--text" id="qrBtnText">Generate Bulk QR</span>
-                                        </button>
-                                    </div>
+                            <div class="d-sm-flex align-items-start border-top mt-2">
+                                <!-- Changed align-items-center to align-items-start for vertical alignment -->
+                                <div class="me-auto"> <!-- Added me-auto to push the select office section down -->
+                                    <h6 class="font-weight-semibold text-lg mb-0"> QR list</h6>
+                                    <p class="text-sm">See information about all QR</p>
+                                </div>
+                                <div class="ms-auto d-flex mt-3">
+                                    <a href="{{ route('qrcode.download', ['officeName' => request()->route('officeName'), 'officeId' => request()->query('id')]) }}"
+                                        class="btn btn-sm btn-dark btn-icon me-2">
+                                        <span class="btn-inner--icon">
+                                            <i class="fa-sharp fa-solid fa-download"
+                                                style="font-size: 0.75rem; margin-right: 0.2rem;"></i>
+                                        </span>
+                                        <span class="btn-inner--text">Download Bulk QR</span>
+                                    </a>
+                                    <button type="submit"
+                                        class="btn btn-sm btn-dark btn-icon me-2 d-flex align-items-center"
+                                        data-bs-toggle="modal" data-bs-target="#generateQRModal">
+                                        <span class="btn-inner--icon">
+                                            <i class="fa-sharp fa-solid fa-qrcode" id="qrIcon"
+                                                style="font-size: 0.75rem; margin-right: 0.2rem;"></i>
+                                        </span>
+                                        <i class="fa-solid fa-spinner fa-spin" id="qrSpinner"
+                                            style="display: none; font-size: 0.75rem; margin-right: 0.2rem;"></i>
+                                        <span class="btn-inner--text" id="qrBtnText">Generate Bulk QR</span>
+                                    </button>
                                 </div>
                             </div>
-                            <div class="card-body px-0 py-0">
-                                <div class="border-bottom py-3 px-3 d-sm-flex align-items-center">
-                                    <div class="row align-items-center perpage">
-                                        <div class="col-auto">
-                                            <label for="items-per-page" class="fw-semibold mb-0">Items per page:</label>
-                                        </div>
-                                        <div class="col-auto">
-                                            <select id="items-per-page" name="items_per_page"
-                                                class="form-select form-select-md" style="padding-right:40px;">
-                                                <option value="" class="text-left">All</option>
-                                                <option value="10">10</option>
-                                                <option value="20">20</option>
-                                                <option value="30" selected>30</option>
-                                                <option value="40">40</option>
-                                                <option value="50">50</option>
-                                            </select>
-                                        </div>
+                        </div>
+                        <div class="card-body px-0 py-0">
+                            <div class="border-bottom py-3 px-3 d-sm-flex align-items-center">
+                                <div class="row align-items-center perpage">
+                                    <div class="col-auto">
+                                        <label for="items-per-page" class="fw-semibold mb-0">Items per page:</label>
                                     </div>
-                                    <div class="row align-items-center perpage ms-auto">
-                                        <div class="col-auto d-flex align-items-center">
-                                            <label for="select_all" class="fw-semibold mb-0 me-2">Select all
-                                                vehicles</label>
-                                            <input type="checkbox" id="select_all">
-                                        </div>
+                                    <div class="col-auto">
+                                        <select id="items-per-page" name="items_per_page"
+                                            class="form-select form-select-md" style="padding-right:40px;">
+                                            <option value="" class="text-left">All</option>
+                                            <option value="10">10</option>
+                                            <option value="20">20</option>
+                                            <option value="30" selected>30</option>
+                                            <option value="40">40</option>
+                                            <option value="50">50</option>
+                                        </select>
                                     </div>
-
-                                    <div class="btn-group ms-auto mx-3" role="group"
-                                        aria-label="Basic radio toggle button group">
-                                        <input type="radio" class="btn-check" name="btnradiotable" id="reset_btn"
-                                            autocomplete="off" data-filter="" value="" checked>
-                                        <label class="btn btn-white px-3 mb-0" for="reset_btn">ALL</label>
-                                        <input type="radio" class="btn-check" name="btnradiotable"
-                                            id="btn_disabled" autocomplete="off" data-filter="SE" value="hasQr">
-                                        <label class="btn btn-white px-3 mb-0" for="btn_disabled">Generated</label>
-                                        <input type="radio" class="btn-check" name="btnradiotable" id="btn_aso"
-                                            autocomplete="off" data-filter="ASO" value="noQr">
-                                        <label class="btn btn-white px-3 mb-0" for="btn_aso">Not Generated</label>
-                                    </div>
-                                    <div class="input-group w-sm-25  grid grid-cols-1">
-                                        <span class="input-group-text text-body">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16px"
-                                                fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                                                stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z">
-                                                </path>
-                                            </svg>
-                                        </span>
-                                        <input type="text" class="form-control" placeholder="Search"
-                                            id="qrsearch" name="search">
+                                </div>
+                                <div class="row align-items-center perpage ms-auto">
+                                    <div class="col-auto d-flex align-items-center">
+                                        <label for="select_all" class="fw-semibold mb-0 me-2">Select all
+                                            vehicles</label>
+                                        <input type="checkbox" id="select_all">
                                     </div>
                                 </div>
 
-                                <div class="table-responsive p-0" id="Table">
-                                    @include('qr-codes.partials.qr_table')
+                                <div class="btn-group ms-auto mx-3" role="group"
+                                    aria-label="Basic radio toggle button group">
+                                    <input type="radio" class="btn-check" name="btnradiotable" id="reset_btn"
+                                        autocomplete="off" data-filter="" value="" checked>
+                                    <label class="btn btn-white px-3 mb-0" for="reset_btn">ALL</label>
+                                    <input type="radio" class="btn-check" name="btnradiotable" id="btn_disabled"
+                                        autocomplete="off" data-filter="SE" value="hasQr">
+                                    <label class="btn btn-white px-3 mb-0" for="btn_disabled">Generated</label>
+                                    <input type="radio" class="btn-check" name="btnradiotable" id="btn_aso"
+                                        autocomplete="off" data-filter="ASO" value="noQr">
+                                    <label class="btn btn-white px-3 mb-0" for="btn_aso">Not Generated</label>
                                 </div>
-                                {{-- <div class="border-top py-3 px-3 d-flex align-items-center">
+                                <div class="input-group w-sm-25  grid grid-cols-1">
+                                    <span class="input-group-text text-body">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16px"
+                                            fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                            stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z">
+                                            </path>
+                                        </svg>
+                                    </span>
+                                    <input type="text" class="form-control" placeholder="Search" id="qrsearch"
+                                        name="search">
+                                </div>
+                            </div>
+
+                            <div class="table-responsive p-0" id="Table">
+                                @include('qr-codes.partials.qr_table')
+                            </div>
+                            {{-- <div class="border-top py-3 px-3 d-flex align-items-center">
                                 <p class="font-weight-semibold mb-0 text-dark text-sm">Page 1 of 10</p>
                                 <div class="ms-auto">
                                     {{-- <button class="btn btn-sm btn-white mb-0">Previous</button>
@@ -181,62 +179,10 @@
                                 </div>
                             </div> --}}
 
-                            </div>
                         </div>
                     </div>
                 </div>
-            @else
-                <div class="row">
-                    <div class="col-12">
-                        <div class="card border shadow-xs mb-4">
-                            <div class="card-header border-bottom pb-0">
-                                <div class="col-6"> <!-- Set the width to 50% using col-6 -->
-                                    <h6 class="font-weight-semibold text-lg mb-0">Select Office</h6>
-                                    <select id="office-select" class="form-select" style="margin-bottom:2%;">
-                                        <option value="" disabled selected>Select office</option>
-                                        <option value="all">All Office</option>
-                                        @foreach ($offices as $office)
-                                            <option value="{{ $office->id }}" data-id="{{ $office->id }}"
-                                                data-slug="{{ $office->office_name }}"
-                                                {{ request()->query('id') == $office->id ? 'selected' : '' }}>
-                                                {{ $office->office_name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                {{-- <div class="d-sm-flex align-items-start border-top">
-                                    <!-- Changed align-items-center to align-items-start for vertical alignment -->
-                                    <div class="me-auto"> <!-- Added me-auto to push the select office section down -->
-                                        <h6 class="font-weight-semibold text-lg mb-0"> QR list</h6>
-                                        <p class="text-sm">See information about all QR</p>
-                                    </div>
-                                    <div class="ms-auto d-flex mt-3">
-                                        <a href="{{ route('qrcode.download', ['officeName' => request()->route('officeName'), 'id' => request()->query('id')]) }}"
-                                            class="btn btn-sm btn-dark btn-icon me-2">
-                                            <span class="btn-inner--icon">
-                                                <i class="fa-sharp fa-solid fa-download"
-                                                    style="font-size: 0.75rem; margin-right: 0.2rem;"></i>
-                                            </span>
-                                            <span class="btn-inner--text">Download Bulk QR</span>
-                                        </a>
-                                        <button type="submit"
-                                            class="btn btn-sm btn-dark btn-icon me-2 d-flex align-items-center"
-                                            data-bs-toggle="modal" data-bs-target="#generateQRModal">
-                                            <span class="btn-inner--icon">
-                                                <i class="fa-sharp fa-solid fa-qrcode" id="qrIcon"
-                                                    style="font-size: 0.75rem; margin-right: 0.2rem;"></i>
-                                            </span>
-                                            <i class="fa-solid fa-spinner fa-spin" id="qrSpinner"
-                                                style="display: none; font-size: 0.75rem; margin-right: 0.2rem;"></i>
-                                            <span class="btn-inner--text" id="qrBtnText">Generate Bulk Branded
-                                                QR</span>
-                                        </button>
-                                    </div>
-                                </div> --}}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            @endif
+            </div>
         </div>
         <x-app.footer />
     </main>
@@ -251,6 +197,9 @@
                 // Redirect to the route with the selected officeName (slug)
                 window.location.href = '{{ route('qrcode.index') }}' + '?id=' +
                     officeId;
+            }
+            else{
+                window.location.href = '{{ route('qrcode.index') }}';
             }
         });
         $(document).on('change', 'input[name="select_vehicle"]', function() {

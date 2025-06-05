@@ -44,7 +44,7 @@
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             grid-template-rows: repeat(2, 1fr);
-            gap: 10px;
+            gap: 2px;
         }
 
         @media print {
@@ -88,7 +88,7 @@
                     <!-- Company Name -->
                     <h1 class="text-[#E20000] text-[32px] DarkerBold z-10">Swara Parklane</h1>
                     <!-- Qr code -->
-                    <div class="flex justify-center w-full gap-4 relative">
+                    <div class="flex justify-center w-full gap-1 relative">
                         <div class="relative p-1 w-32">
                             <!-- Corners -->
                             <img src="./assets/qrborder.png" class="absolute top-0 left-0 w-2/12" alt="">
@@ -105,6 +105,16 @@
                         <img src="./assets/logo.svg" class="absolute w-8 h-auto z-10 right-5 mt-2" alt="">
                     </div>
                     <!-- Office No -->
+                    <div class="flex flex-col items-center justify-center">
+                        <div class="flex items-center gap-2 z-10">
+                            <div class="w-3 h-3 hidden rounded-full overflow-hidden mt-[6px]">
+                                <img src="./assets/dot.svg" class=" w-full h-full" alt="" srcset="">
+                            </div>
+                            <p class="text-[#6CC8C6] DarkerBold text-lg">{{  $vehicle->vehicle->vehicle_number }}</p>
+                            <div class="w-3 h-3 rounded-full hidden overflow-hidden mt-[6px]">
+                                <img src="./assets/dot.svg" class=" w-full h-full" alt="" srcset="">
+                            </div>
+                        </div>
                     <div class="flex items-center gap-3 z-10">
                         <div class="w-3 h-3 rounded-full overflow-hidden mt-[6px]">
                             <img src="./assets/dot.svg" class=" w-full h-full" alt="" srcset="">
@@ -113,6 +123,8 @@
                         <div class="w-3 h-3 rounded-full overflow-hidden mt-[6px]">
                             <img src="./assets/dot.svg" class=" w-full h-full" alt="" srcset="">
                         </div>
+                        
+                    </div>
                     </div>
                     <!-- Building Name -->
                     <div class="w-9/12 h-36 z-10 rounded-xl overflow-hidden">
@@ -132,3 +144,8 @@
 </body>
 
 </html>
+<script>
+    window.onload = function() {
+        window.print(); // Automatically triggers the print dialog
+    };
+</script>
