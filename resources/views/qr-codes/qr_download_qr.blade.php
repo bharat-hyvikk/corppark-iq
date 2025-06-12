@@ -83,7 +83,7 @@
     @foreach ($qrCodes->chunk(4) as $chunk)
         <div class="a4-page">
             @foreach ($chunk as $vehicle)
-                <div class="qr-box relative">
+                <div class="qr-box relative rounded-3xl overflow-hidden">
                     <img src="./assets/bg.png" class="absolute top-0 left-0 w-full h-full"></img>
                     <!-- Company Name -->
                     <h1 class="text-[#E20000] text-[32px] DarkerBold z-10">Swara Parklane</h1>
@@ -110,7 +110,7 @@
                             <div class="w-3 h-3 hidden rounded-full overflow-hidden mt-[6px]">
                                 <img src="./assets/dot.svg" class=" w-full h-full" alt="" srcset="">
                             </div>
-                            <p class="text-[#6CC8C6] DarkerBold text-lg">{{  $vehicle->vehicle->vehicle_number }}</p>
+                            <p class="text-[#6CC8C6]  text-2xl font-extrabold">{{  $vehicle->vehicle->vehicle_number }}</p>
                             <div class="w-3 h-3 rounded-full hidden overflow-hidden mt-[6px]">
                                 <img src="./assets/dot.svg" class=" w-full h-full" alt="" srcset="">
                             </div>
@@ -119,7 +119,7 @@
                         <div class="w-3 h-3 rounded-full overflow-hidden mt-[6px]">
                             <img src="./assets/dot.svg" class=" w-full h-full" alt="" srcset="">
                         </div>
-                        <p class="text-[#6CC8C6] DarkerBold text-lg">Office No:{{  $vehicle->office->office_number }}</p>
+                        <p class="text-[#6CC8C6]  text-2xl font-semibold ">Office No:{{  $vehicle->office->office_number }}</p>
                         <div class="w-3 h-3 rounded-full overflow-hidden mt-[6px]">
                             <img src="./assets/dot.svg" class=" w-full h-full" alt="" srcset="">
                         </div>
