@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Building;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\Storage;
 
 class BuildingController extends Controller
 {
@@ -19,13 +20,13 @@ class BuildingController extends Controller
         $request->validate([
             'building_name' => 'required',
             'building_address' => 'required',
-            'building_image'=>'required|mimes:png,jpg,jpeg|max:2048',
+            'building_images'=>'required|mimes:png,jpg,jpeg|max:2048',
         ]);
         $building = new Building();
-        if($request->hasFile('building_image')){
-            $file = $request->file('building_image');
-            $filename = $request->building_name . '.' . rand(0000, 9999) . $file->getClientOriginalExtension();
-            $file->move(storage_path('images/buildings'), $filename);
+        if($request->hasFile('building_images')){
+            $file = $request->file('building_images');
+            $filename = $request->building_name . '_' . rand(0000, 9999) . '.' .$file->getClientOriginalExtension();
+            $request->file('building_images')->storeAs('images/buildings', $filename, 'public');
             $building->building_image = $filename;
         }
         $building->building_name = $request->building_name;
@@ -33,11 +34,11 @@ class BuildingController extends Controller
         // dd($building);
         $building->save();
 
-        $total = $building->total();
+        // $total = $building->total();
         // $table = view('vehicles.partials.vehicles_table', compact('vehicles'))->render();
         return response()->json([
             // 'table' => $table,
-            'total' => $total,
+            // 'total' => $total,
             // 'pagination' => $pagination,
             'message' => 'Building added successfully.',
         ]);
