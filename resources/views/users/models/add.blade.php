@@ -1,5 +1,5 @@
-<div class="modal modal-md" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+<div class="modal" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-md" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="addModalLabel">Add User</h5>
@@ -12,41 +12,123 @@
                     <div class="mb-3">
                         <label for="dealerName" class="form-label">User Name</label>
                         <input type="text" class="form-control" name='name' aria-describedby="dealerNameHelp"
-                        value="{{ old('dealerName') }}" class="form-control" autocomplete="">
+                            value="{{ old('dealerName') }}" class="form-control" autocomplete="">
                         <label class="bg-danger text-white  form-label w-100 mt-2 p-2 d-none" id="add_name"></label>
                     </div>
                     <div class="mb-3">
-                        <label for="dealeremail" class="form-label">Email</label>
-                        <input type="email" name="email" id="dealeremail" class="form-control">
-                        <label class="bg-danger text-white  form-label w-100 mt-2 p-2 d-none" id="add_email"></label>
+                        <label for="add_user_type_label" class="form-label">User Type</label>
+                        <select class="form-select" id="add_user_type_label" name="user_type">
+                            <option value="" selected disabled>Select User Type</option>
+                            <option value="0">Guard</option>
+                            @if (auth()->user()->user_type == '1')
+                                <option value="2">Manager</option>
+                            @endauth
+                            <option value="3">Submanager</option>
+                    </select>
+                    <label class="bg-danger text-white  form-label w-100 mt-2 p-2 d-none"
+                        id="add_user_type"></label>
+                </div>
+                <div class="mb-3">
+                    <label for="dealeremail" class="form-label">Email</label>
+                    <input type="email" name="email" id="dealeremail" class="form-control">
+                    <label class="bg-danger text-white  form-label w-100 mt-2 p-2 d-none" id="add_email"></label>
+                </div>
+                <div class="mb-3">
+                    <label for="dealer_phone_number" class="form-label">Phone Number</label>
+                    <input type="tel" name="phone" id="dealer_phone_number" class="form-control">
+                    <label class="bg-danger text-white  form-label w-100 mt-2 p-2 d-none" id="add_phone"></label>
+                </div>
+
+                <div class="mb-3">
+                    <label for="dealer_password" class="form-label">Password</label>
+                    <div class="input-group w-full">
+                        <input type="password" name="password" id="dealer_password" class="form-control">
+                        <span class="input-group-text bg-white" id="togglePassword" style="cursor: pointer;">
+                            <i class="fas fa-eye" id="password_icon"></i>
+                        </span>
                     </div>
-                    <div class="mb-3">
-                        <label for="dealer_phone_number" class="form-label">Phone Number</label>
-                        <input type="tel" name="phone" id="dealer_phone_number" class="form-control">
-                        <label class="bg-danger text-white  form-label w-100 mt-2 p-2 d-none" id="add_phone"></label>
-                    </div>
-                    <div class="mb-3">
-                        <label for="dealer_password" class="form-label">Password</label>
-                        <div class="input-group w-full">
-                            <input type="password" name="password" id="dealer_password" class="form-control">
-                            <span class="input-group-text bg-white" id="togglePassword" style="cursor: pointer;">
-                                <i class="fas fa-eye" id="password_icon"></i>
-                            </span>
+                    <label class="bg-danger text-white form-label w-100 mt-2 p-2 d-none" id="add_password"></label>
+                </div>
+
+                <div class="mb-3 d-none permissions">
+                    <label class="form-label">Offices Permissions</label>
+                    <div class="d-flex gap-2">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="office.add" id="add"
+                                name="permissions[]">
+                            <label class="form-check-label" for="add">
+                                Add
+                            </label>
                         </div>
-                        <label class="bg-danger text-white form-label w-100 mt-2 p-2 d-none" id="add_password"
-                            ></label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="office.update" id="update"
+                                name="permissions[]">
+                            <label class="form-check-label" for="create">
+                                Update
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="office.delete" id="delete"
+                                name="permissions[]">
+                            <label class="form-check-label" for="delete">
+                                Delete
+                            </label>
+                        </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary" id="addUserBtn">
-                            <i class="fa-solid fa-spinner" style="display: none;"></i> <span
-                                id="btn-text">Submit</span>
-                        </button>
+                </div>
+
+                <div class="mb-3 d-none permissions">
+                    <label class="form-label">Vehicles Permissions</label>
+                    <div class="d-flex gap-2">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="vehicle.add" id="add"
+                                name="permissions[]">
+                            <label class="form-check-label" for="add">
+                                Add
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="vehicle.update"
+                                id="update" name="permissions[]">
+                            <label class="form-check-label" for="create">
+                                Update
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="vehicle.delete"
+                                id="delete" name="permissions[]">
+                            <label class="form-check-label" for="delete">
+                                Delete
+                            </label>
+                        </div>
                     </div>
-                </form>
-            </div>
+                </div>
+
+                <div class="mb-3 d-none permissions">
+                    <label class="form-label">QR Permissions</label>
+                    <div class="d-flex gap-2">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="qr.generate" id="generate"
+                                name="permissions[]">
+                            <label class="form-check-label" for="generate">
+                                Generate
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary" id="addUserBtn">
+                        <i class="fa-solid fa-spinner" style="display: none;"></i> <span
+                            id="btn-text">Submit</span>
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
+</div>
 </div>
 </div>
 <script>
@@ -57,6 +139,16 @@
             passwordField.setAttribute("type", type);
             $("#password_icon").toggleClass("fa-eye-slash");
             $("#password_icon").toggleClass("fa-eye");
+        });
+
+        $("#add_user_type_label").change(function(e) {
+            let type = $(this).val();
+            console.log(type);
+            if (type == "3") {
+                $(".permissions").removeClass("d-none");
+            } else {
+                $(".permissions").addClass("d-none");
+            }
         });
 
         $("#addUserForm").submit(function(event) {
@@ -82,7 +174,7 @@
                 name: 'currentPage',
                 value: currentPage
             });
-            
+
             $.ajax({
                 type: "post",
                 url: url,
