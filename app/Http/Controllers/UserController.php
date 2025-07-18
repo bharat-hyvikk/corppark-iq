@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Support\Facades\DB;
+use Spatie\Permission\Models\Permission;
 
 class  UserController extends Controller
 {
@@ -17,7 +18,7 @@ class  UserController extends Controller
      */
     public function index(Request $request)
     {
-        $users = User::latest()->where('user_type', '0');
+        $users = User::latest()->whereIn('user_type', ['0', '2', '3']);
         if ($request->ajax()) {
             $search = $request->search;
             $status = $request->status;
@@ -64,7 +65,8 @@ class  UserController extends Controller
                     'required',
                     'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{10,}$/'
                 ],
-                'phone' => 'required|numeric|digits:10|unique:users,phone'
+                'phone' => 'required|numeric|digits:10|unique:users,phone',
+                'user_type' => 'required|in:0,2,3'
             ],
             [
                 'password.required' => 'The password field is required.',
@@ -83,15 +85,29 @@ class  UserController extends Controller
         $user->email = $request->email;
         $user->password = bcrypt($request->password);
         $user->phone = $request->phone;
-        $user->user_type = 0;
+        $user->user_type = $request->user_type;
         $user->status = "Active";
         // dd($user);
+        $permissions = $request->permissions;
         $user->save();
+        if ($user->user_type == '2') {
+            $user->assignRole('manager');
+        } else if ($user->user_type == '3') {
+            $user->assignRole('submanager');
+        }
+        $allPermissions = Permission::pluck('name')->toArray();
+        foreach ($permissions as $permission) {
+            // check permission before assigning if it exists or not 
+            if (in_array($permission, $allPermissions)) {
+                $user->givePermissionTo($permission);
+            }
+        }
+
         $search = $request->search;
         $itemsPerPage = $request->input('itemsPerPage') ?? 100000;
         $curentPage = $request->input('currentPage', 1);
         $status = $request->status;
-        $users = User::latest()->latest()->where('user_type', '0');
+        $users = User::latest()->whereIn('user_type', ['0', '2', '3']);
         $users = $users->where('name', 'like', "%$search%");
         if ($status) {
             $users = $users->where('status', $status);
@@ -159,7 +175,9 @@ class  UserController extends Controller
         if (!$user) {
             return response()->json(['error' => 'User not found'], 404);
         }
-        return response()->json(['user' => $user]);
+        $permissions = $user->permissions->pluck("name");
+
+        return response()->json(['user' => $user, 'permissions' => $permissions]);
     }
 
     /**
@@ -195,11 +213,20 @@ class  UserController extends Controller
         }
         $user->phone = $request->phone;
         $user->save();
+        $user->permissions()->detach();
+        $permissions = $request->permissions??[];
+        $allPermissions = Permission::pluck('name')->toArray();
+        foreach ($permissions as $permission) {
+            // check permission before assigning if it exists or not 
+            if (in_array($permission, $allPermissions)) {
+                $user->givePermissionTo($permission);
+            }
+        }
         $search = $request->search;
         $itemsPerPage = $request->input('itemsPerPage') ?? 100000;
         $curentPage = $request->input('currentPage', 1);
         $status = $request->status;
-        $users = User::latest()->where('user_type', '0');
+        $users = User::latest()->whereIn('user_type', ['0', '2', '3']);
         if ($status) {
             $users = $users->where('status', $status);
         }
