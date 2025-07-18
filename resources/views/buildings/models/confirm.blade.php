@@ -3,12 +3,12 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title text-capitalize" id="deleteModalLabel" ></h5>
+                <h5 class="modal-title text-capitalize" id="deleteModalLabel"></h5>
                 <button type="button" class="btn-close bg-secondary" data-bs-dismiss="modal"
                     aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <p>Are you sure you want to delete this User? </p>
+                <p>Are you sure you want to delete this Vehicle? </p>
             </div>
             <div class="modal-footer">
                 <form action="" id="deleteForm" method="post">
@@ -23,12 +23,12 @@
 </div>
 <script>
     $(document).ready(function() {
-        let toastTimeout; // Declare a variable to hold the timeout ID
+        let toastTimeout; // Declare a variable to hold the timeout ID    
         $(document).on('click', '.delete-item', function() {
-            deletedealer = $(this).data('id'); // Get the user ID
-             let name=$(this).data("name");
-             console.log(name);
-             $('#deleteModalLabel').text(`Delete User : ${name}`);
+            deletedealer = $(this).data('id'); // Get the vehicle ID
+            let name = $(this).data("name");
+            console.log(name);
+            $('#deleteModalLabel').text(`Delete Vehicle with Number : ${name}`);
             $('#deleteModal').modal('show'); // Show the modal
         });
         $('#confirmDelete').click(function(e) {
@@ -37,20 +37,19 @@
             let itemsPerPage = $('#itemsPerPage').val(); // Get selected items per page
             let currentPage = $('ul.pagination li.active span.page-link').text();
             let search = $('#search').val();
-            let filter = $('input[name="btnradiotable"]:checked').val();
-            let standardId = $('#dealerStandard').val();
+            let filter = $('input[name="status_rdo"]:checked').val();
             $.ajax({
                 type: "post",
-                url: "{{ route('users.delete') }}",
+                url: "{{ route('vehicles.delete') }}",
                 data: {
                     id: deletedealer,
                     itemsPerPage: itemsPerPage,
                     page: page,
                     search: search,
-                    filter: filter,
-                    standardId: standardId // Added standard ID here
+                    status: filter,
+                    select_office: selectOffice
                 },
-                  headers: {
+                headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
                 success: function(response) {
@@ -66,7 +65,7 @@
                 error: function(xhr, status, error) {
                     let errors = xhr.responseJSON.errors;
 
-                    $("#errorMsgCustom").text("Failed to delete user");
+                    $("#errorMsgCustom").text("Failed to delete vehicle");
                     setTimeout(() => {
                         $("#errorMsgCustom").text('').hide();
                     }, 3000);
