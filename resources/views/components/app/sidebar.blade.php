@@ -58,6 +58,16 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link  {{ is_current_route('buildings.manage') ? 'active' : '' }}"
+                        href="{{ route('buildings.manage') }}">
+                        <div
+                            class="icon icon-shape icon-sm px-0 text-center d-flex align-items-center justify-content-center">
+                            <i class="fa-sharp fa-solid fas fa-car-side" style="font-size:15px;"></i>
+                        </div>
+                        <span class="nav-link-text ms-1">Building Management</span>
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link  {{ is_current_route('vehicles.manage') ? 'active' : '' }}"
                         href="{{ route('vehicles.manage') }}">
                         <div

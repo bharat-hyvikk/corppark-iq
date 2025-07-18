@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admins\DealersController;
+use App\Http\Controllers\BuildingController;
 use App\Http\Controllers\Dealers\InvoiceManagementController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
@@ -120,20 +121,30 @@ route::prefix('vehicles')
         route::post('delete', [VehicleController::class, 'destroy'])->name('vehicles.delete');
     });
 
+route::prefix('buildings')
+    ->middleware('auth')
+    ->group(function () {
+        route::get('manage', [BuildingController::class, 'index'])->name('buildings.manage');
+        route::post('save', [BuildingController::class, 'store'])->name('buildings.save');
+        route::post('edit', [BuildingController::class, 'edit'])->name('buildings.edit');
+        // route::post('update', [VehicleController::class, 'update'])->name('vehicles.update');
+        // route::post('delete', [VehicleController::class, 'destroy'])->name('vehicles.delete');
+    });
+
 // ** Qr Code Management
 Route::get('/qr-code', [QrCodeController::class, 'index'])->name('qrcode.index')->middleware("auth");
 Route::get('/generate-qrcode', [QrCodeController::class, 'generateQrCode'])->name('qrcode.generate')->middleware("auth");
 Route::get('/download-qrcode/{qrId?}', [QrCodeController::class, 'downloadQrCode'])->name('qrcode.download')->middleware("auth");
 
-// privacy policy 
+// privacy policy
 Route::get('/privacy-policy', function () {
     return view('privacy');
 })->name('privacy-policy');
 
-// contact us 
+// contact us
 Route::get('/contact-us', function () {
     return view('contact');
 })->name('contact-us');
 
-// send email using contact us controller 
+// send email using contact us controller
 Route::get('/send-email', [ContactUsController::class, 'sendEmail'])->name('send-email');
