@@ -45,6 +45,7 @@
                                     <h6 class="font-weight-semibold text-lg mb-0">Office list</h6>
                                     <p class="text-sm">See information about all Office</p>
                                 </div>
+                            @if(auth()->user()->user_type == '1' || auth()->user()->can("office.add"))
                                 <div class="ms-auto d-flex">
                                     <div>
                                         <button type="button" data-bs-toggle="modal" data-bs-target="#addModal"
@@ -61,7 +62,9 @@
                                         </button>
                                     </div>
                                 </div>
+                                @endif
                             </div>
+
                         </div>
                         <div class="card-body px-0 py-0">
                             <div class="border-bottom py-3 px-3 d-sm-flex align-items-center">

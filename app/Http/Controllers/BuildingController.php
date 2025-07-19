@@ -20,7 +20,7 @@ class BuildingController extends Controller
         $request->validate([
             'building_name' => 'required',
             'building_address' => 'required',
-            'building_images'=>'required|mimes:png,jpg,jpeg|max:2048',
+            'building_images'=>'required|mimes:png,jpg,jpeg|max:20048',
         ]);
         $building = new Building();
         if($request->hasFile('building_images')){

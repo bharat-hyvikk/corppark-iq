@@ -28,6 +28,21 @@
                     <label class="bg-danger text-white  form-label w-100 mt-2 p-2 d-none"
                         id="edit_user_type"></label>
                 </div>
+                @if (auth()->user()->user_type == '1')
+
+                    <div class="mb-3">
+                        <label for="edit_bulding_label" class="form-label">Building Name</label>
+                        <select class="form-select" id="edit_bulding_label" name="building">
+                            <option value="" selected disabled>Select Building Name</option>
+                            @foreach ($buildings as $building)
+                                <option value="{{ $building->id }}">{{ $building->building_name }}</option>
+                            @endforeach
+                        </select>
+                        <label class="bg-danger text-white  form-label w-100 mt-2 p-2 d-none"
+                            id="add_building"></label>
+                    </div>
+                @endif
+
                 <div class="mb-3">
                     <label for="dealeremail" class="form-label">Email</label>
                     <input type="email" name="email" id="dealeremail" class="form-control">
@@ -48,7 +63,7 @@
                     </div>
                     <label class="bg-danger text-white form-label w-100 mt-2 p-2 d-none" id="edit_password"></label>
                 </div>
-                <div class="mb-3  permissions">
+                <div class="mb-3  editpermissions">
                     <label class="form-label">Offices Permissions</label>
                     <div class="d-flex gap-2">
                         <div class="form-check">
@@ -75,7 +90,7 @@
                     </div>
                 </div>
 
-                <div class="mb-3  permissions">
+                <div class="mb-3  editpermissions">
                     <label class="form-label">Vehicles Permissions</label>
                     <div class="d-flex gap-2">
                         <div class="form-check">
@@ -102,7 +117,7 @@
                     </div>
                 </div>
 
-                <div class="mb-3  permissions">
+                <div class="mb-3  editpermissions">
                     <label class="form-label">QR Permissions</label>
                     <div class="d-flex gap-2">
                         <div class="form-check">
@@ -142,10 +157,15 @@
             let type = $(this).val();
             console.log(type);
             if (type == "3") {
-                $(".permissions").removeClass("d-none");
+                $(".editpermissions").removeClass("d-none");
             } else {
-                $(".permissions").addClass("d-none");
+                $(".editpermissions").addClass("d-none");
             }
+        });
+        $('#editModal').on('hidden.bs.modal', function() {
+            $("#updateForm")[0].reset();
+            $(".editpermissions").addClass("d-none");
+
         });
 
         $(document).on("click", "#editUserBtn", function() {
@@ -166,18 +186,22 @@
                     $("[name='name']").val(response.user.name);
                     $("[name='email']").val(response.user.email);
                     $("[name='phone']").val(response.user.phone);
+                    // reset password field 
+                    $("[name='password']").val("");
+                    // set building 
+                    $("[name='building']").val(response.user.building_id);
                     $("#edit_user_type_label").val(response.user.user_type)
                     if (user.user_type == "3") {
-                        $(".permissions").removeClass("d-none");
+                        $(".editpermissions").removeClass("d-none");
                     } else {
-                        $(".permissions").addClass("d-none");
+                        $(".editpermissions").addClass("d-none");
                     }
                     let allPermissions = $("[name='permissions[]']");
-                    allPermissions.each(function(){
-                    let permissionValue=$(this).val();
-                     if(userPermissions.includes(permissionValue)){
-                        $(this).prop('checked',true);
-                     }
+                    allPermissions.each(function() {
+                        let permissionValue = $(this).val();
+                        if (userPermissions.includes(permissionValue)) {
+                            $(this).prop('checked', true);
+                        }
                     });
 
 

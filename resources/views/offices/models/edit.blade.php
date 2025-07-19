@@ -8,38 +8,51 @@
             </div>
             <div class="modal-body">
                 <form action="{{ route('offices.update') }}" method="post" enctype="multipart/form-data"
-                    id="updateForm">
+                    id="updateForm" class="row">
                     @csrf
-                    <div class="mb-3">
+                    <div class="mb-3 col-6">
                         <label for="dealerName" class="form-label">Office Name</label>
                         <input type="text" class="form-control" name='name' aria-describedby="dealerNameHelp"
                             value="{{ old('dealerName') }}" class="form-control" autocomplete="">
                         <label class="bg-danger text-white  form-label w-100 mt-2 p-2 d-none" id="edit_name"></label>
                     </div>
-                    <div class="mb-3">
+                    @if (auth()->user()->user_type == '1')
+                        <div class="mb-3 col-6">
+                            <label for="edit_bulding_label" class="form-label">Building Name</label>
+                            <select class="form-select" id="edit_bulding_label" name="building">
+                                <option value="" selected disabled>Select Building Name</option>
+                                @foreach ($buildings as $building)
+                                    <option value="{{ $building->id }}">{{ $building->building_name }}</option>
+                                @endforeach
+                            </select>
+                            <label class="bg-danger text-white  form-label w-100 mt-2 p-2 d-none"
+                                id="edit_building"></label>
+                        </div>
+                    @endif
+                    <div class="mb-3 col-6">
                         <label for="owner_name" class="form-label">Owner Name</label>
                         <input type="text" class="form-control" name='owner_name' aria-describedby="dealerNameHelp"
                             class="form-control" autocomplete="">
                         <label class="bg-danger text-white  form-label w-100 mt-2 p-2 d-none"
                             id="edit_owner_name"></label>
                     </div>
-                    <div class="mb-3">
+                    <div class="mb-3 col-6">
                         <label for="office_number" class="form-label">Office Number</label>
                         <input type="text" name="office_number" id="office_number" class="form-control">
                         <label class="bg-danger text-white  form-label w-100 mt-2 p-2 d-none"
                             id="edit_office_number"></label>
                     </div>
-                    <div class="mb-3">
+                    <div class="mb-3 col-6">
                         <label for="dealeremail" class="form-label">Owner Email</label>
                         <input type="email" name="email" id="dealeremail" class="form-control">
                         <label class="bg-danger text-white  form-label w-100 mt-2 p-2 d-none" id="edit_email"></label>
                     </div>
-                    <div class="mb-3">
+                    <div class="mb-3 col-6">
                         <label for="dealer_phone_number" class="form-label">Owner Phone Number</label>
                         <input type="text" name="phone" id="dealer_phone_number" class="form-control">
                         <label class="bg-danger text-white  form-label w-100 mt-2 p-2 d-none" id="edit_phone"></label>
                     </div>
-                    <div class="mb-3">
+                    <div class="mb-3 col-6">
                         <label for="vehicle_limit" class="form-label">Vehicle Limit</label>
                         <input type="tel" name="vehicle_limit" id="vehicle_limit" class="form-control">
                         <label class="bg-danger text-white  form-label w-100 mt-2 p-2 d-none"
@@ -78,8 +91,13 @@
                     $("#updateForm [name='owner_name']").val(response.Office.owner_name);
                     $("#updateForm [name='email']").val(response.Office.owner_email);
                     $("#updateForm [name='phone']").val(response.Office.owner_phone_number);
-                    $("#updateForm [name='office_number']").val(response.Office.office_number);
-                    $("#updateForm [name='vehicle_limit']").val(response.Office.vehicle_limit);
+                    $("#updateForm [name='office_number']").val(response.Office
+                        .office_number);
+                    $("#updateForm [name='vehicle_limit']").val(response.Office
+                        .vehicle_limit);
+
+                    $("#updateForm [name='building']").val(response.Office
+                        .building_id);
 
                     $("#editOfficeModal").modal("show");
 
@@ -140,17 +158,24 @@
             },
             error: function(xhr, status, error) {
                 let errors = xhr.responseJSON.errors; // Renamed to avoid conflict
+                let PermissionMessage = xhr.responseJSON.permissionMessage;
+                console.log(xhr.responseJSON);
                 $("#updateUserBtn").attr('disabled', false);
                 $('#updateUserBtn').find('i').removeClass('fa-spin').hide();
                 $('#updateUserBtn').find('span').text('Submit');
                 $.each(errors, function(key, message) {
                     let label = $('#' + "edit_" + key);
+                    console.log(label);
                     $(label).html(message).removeClass('d-none');
                     setTimeout(() => {
                         $(label).html(message).addClass('d-none');
                     }, 5000);
                 });
-                $("#errorMsgCustom").html("Failed to add Office");
+                if (PermissionMessage) {
+                    $("#editOfficeModal").modal("hide");
+
+                    $("#errorMsgCustom").text(PermissionMessage).show();
+                }
                 setTimeout(() => {
                     $("#errorMsgCustom").html('').hide();
                 }, 3000);

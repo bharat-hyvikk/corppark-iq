@@ -25,9 +25,10 @@ class LoginController extends Controller
                 'message' => $validator->errors()->first(),
             ], 422);
         }
-        // auth attempt 
+        // auth attempt
         if (auth()->attempt($request->only('email', 'password'))) {
             $user = auth()->user();
+            dd("here");
             if ($user->status == "Inactive") {
                 return response()->json([
                     'success' => 0,
@@ -35,7 +36,7 @@ class LoginController extends Controller
                 ], 422);
             }
             // $user->api_token =  Str::random(80);
-            // genetaye only if if api token doesnt exist 
+            // genetaye only if if api token doesnt exist
             if (!$user->api_token) {
                 $user->api_token = Str::random(80);
             }

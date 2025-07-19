@@ -28,6 +28,19 @@
                     <label class="bg-danger text-white  form-label w-100 mt-2 p-2 d-none"
                         id="add_user_type"></label>
                 </div>
+                @if (auth()->user()->user_type == '1')
+                    <div class="mb-3">
+                        <label for="add_bulding_label" class="form-label">Building Name</label>
+                        <select class="form-select" id="add_bulding_label" name="building">
+                            <option value="" selected disabled>Select Building Name</option>
+                            @foreach ($buildings as $building)
+                                <option value="{{ $building->id }}">{{ $building->building_name }}</option>
+                            @endforeach
+                        </select>
+                        <label class="bg-danger text-white  form-label w-100 mt-2 p-2 d-none"
+                            id="add_building"></label>
+                    </div>
+                @endif
                 <div class="mb-3">
                     <label for="dealeremail" class="form-label">Email</label>
                     <input type="email" name="email" id="dealeremail" class="form-control">
@@ -213,5 +226,14 @@
                 }
             });
         }); // Closing brace for the submit function
+
+        $('#addModal').on('hidden.bs.modal', function() {
+            $("#addUserForm")[0].reset();
+            $(".permissions").addClass("d-none");
+
+        });
+
+
+
     }); // Closing brace for $(document).ready
 </script>

@@ -31,17 +31,17 @@ use App\Http\Middleware\DealerMiddleware;
 
 Route::get('/', function () {
     return redirect('/dashboard');
-})->middleware('auth');
+})->middleware(['auth','admin']);
 
 Route::get('/dashboard', [DashboardController::class, 'index'])
     ->name('dashboard')
-    ->middleware('auth');
+    ->middleware(['auth','admin']);
 
 Route::get('/profile', function () {
     return view('account-pages.profile');
 })
     ->name('profile')
-    ->middleware('auth');
+    ->middleware(['auth','admin']);
 
 Route::get('/signin', function () {
     return view('account-pages.signin');
@@ -60,7 +60,7 @@ Route::get('/sign-in', [LoginController::class, 'create'])
 Route::post('/sign-in', [LoginController::class, 'store'])->middleware('guest');
 
 Route::post('/logout', [LoginController::class, 'destroy'])
-    ->middleware('auth')
+    ->middleware(['auth','admin'])
     ->name('logout');
 
 Route::get('/forgot-password', [ForgotPasswordController::class, 'create'])
@@ -78,18 +78,18 @@ Route::post('/reset-password', [ResetPasswordController::class, 'store'])->middl
 
 Route::get('user-profile', [ProfileController::class, 'index'])
     ->name('users.profile')
-    ->middleware('auth');
+    ->middleware(['auth','admin']);
 Route::post('/laravel-examples/user-profile/update', [ProfileController::class, 'update'])
     ->name('admin.update')
-    ->middleware('auth');
+    ->middleware(['auth','admin']);
 Route::get('/laravel-examples/users-management', [UserController::class, 'index'])
     ->name('users-management')
-    ->middleware('auth');
+    ->middleware(['auth','admin']);
 // route::get('/dealersmanage', [DealersController::class, 'index'])->name('dealers.manage')->middleware('admin');
 // route::post('/save', [DealersController::class, 'store'])->name('dealers.save')->middleware('admin');
 
 route::prefix('users')
-    ->middleware('auth')
+    ->middleware(['auth','admin'])
     ->group(function () {
         route::get('manage', [UserController::class, 'index'])->name('users.manage');
         route::post('save', [UserController::class, 'store'])->name('users.save');
@@ -101,7 +101,7 @@ route::prefix('users')
 
 // ** office management
 route::prefix('offices')
-    ->middleware('auth')
+    ->middleware(['auth','admin'])
     ->group(function () {
         route::get('manage', [OfficeController::class, 'index'])->name('offices.manage');
         route::post('save', [OfficeController::class, 'store'])->name('offices.save');
@@ -112,7 +112,7 @@ route::prefix('offices')
 
 // ** vehicle management
 route::prefix('vehicles')
-    ->middleware('auth')
+    ->middleware(['auth','admin'])
     ->group(function () {
         route::get('manage', [VehicleController::class, 'index'])->name('vehicles.manage');
         route::post('save', [VehicleController::class, 'store'])->name('vehicles.save');
@@ -122,7 +122,7 @@ route::prefix('vehicles')
     });
 
 route::prefix('buildings')
-    ->middleware('auth')
+    ->middleware(['auth','admin'])
     ->group(function () {
         route::get('manage', [BuildingController::class, 'index'])->name('buildings.manage');
         route::post('save', [BuildingController::class, 'store'])->name('buildings.save');

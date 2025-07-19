@@ -4,7 +4,8 @@
             aria-hidden="true" id="iconSidenav"></i>
         <a class="navbar-brand d-flex align-items-center m-0" href="{{ route('dashboard') }}" target="_self">
             <div class="d-flex flex-column align-items-center">
-            <img src="{{ asset('assets/img/corppark-logo.svg') }}" style="width: 59%; height:100%;object-fit:cover" class="pb-1">
+                <img src="{{ asset('assets/img/corppark-logo.svg') }}" style="width: 59%; height:100%;object-fit:cover"
+                    class="pb-1">
             </div>
         </a>
     </div>
@@ -37,6 +38,7 @@
                     <span class="nav-link-text ms-1">Dashboard</span>
                 </a>
             </li>
+            @if (Auth::user()->isManager || Auth::user()->user_type == '1')
                 <li class="nav-item">
                     <a class="nav-link  {{ is_current_route('users.manage') ? 'active' : '' }}"
                         href="{{ route('users.manage') }}">
@@ -47,46 +49,47 @@
                         <span class="nav-link-text ms-1">User Management</span>
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link  {{ is_current_route('offices.manage') ? 'active' : '' }}"
-                        href="{{ route('offices.manage') }}">
-                        <div
-                            class="icon icon-shape icon-sm px-0 text-center d-flex align-items-center justify-content-center">
-                            <i class="fa-sharp fa-solid far fa-building" style="font-size:15px;"></i>
-                        </div>
-                        <span class="nav-link-text ms-1">Office Management</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link  {{ is_current_route('buildings.manage') ? 'active' : '' }}"
-                        href="{{ route('buildings.manage') }}">
-                        <div
-                            class="icon icon-shape icon-sm px-0 text-center d-flex align-items-center justify-content-center">
-                            <i class="fa-sharp fa-solid fas fa-car-side" style="font-size:15px;"></i>
-                        </div>
-                        <span class="nav-link-text ms-1">Building Management</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link  {{ is_current_route('vehicles.manage') ? 'active' : '' }}"
-                        href="{{ route('vehicles.manage') }}">
-                        <div
-                            class="icon icon-shape icon-sm px-0 text-center d-flex align-items-center justify-content-center">
-                            <i class="fa-sharp fa-solid fas fa-car-side" style="font-size:15px;"></i>
-                        </div>
-                        <span class="nav-link-text ms-1">Vehicle Management</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link  {{ is_current_route('qrcode.index') ? 'active' : '' }}"
-                        href="{{ route('qrcode.index') }}">
-                        <div
-                            class="icon icon-shape icon-sm px-0 text-center d-flex align-items-center justify-content-center">
-                            <i class="fa-sharp fa-solid fas fas fa-qrcode" style="font-size:15px;"></i>
-                        </div>
-                        <span class="nav-link-text ms-1">QR Code Management</span>
-                    </a>
-                </li>
+            @endif
+            <li class="nav-item">
+                <a class="nav-link  {{ is_current_route('offices.manage') ? 'active' : '' }}"
+                    href="{{ route('offices.manage') }}">
+                    <div
+                        class="icon icon-shape icon-sm px-0 text-center d-flex align-items-center justify-content-center">
+                        <i class="fa-sharp fa-solid far fa-building" style="font-size:15px;"></i>
+                    </div>
+                    <span class="nav-link-text ms-1">Office Management</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link  {{ is_current_route('buildings.manage') ? 'active' : '' }}"
+                    href="{{ route('buildings.manage') }}">
+                    <div
+                        class="icon icon-shape icon-sm px-0 text-center d-flex align-items-center justify-content-center">
+                        <i class="fa-sharp fa-solid fas fa-car-side" style="font-size:15px;"></i>
+                    </div>
+                    <span class="nav-link-text ms-1">Building Management</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link  {{ is_current_route('vehicles.manage') ? 'active' : '' }}"
+                    href="{{ route('vehicles.manage') }}">
+                    <div
+                        class="icon icon-shape icon-sm px-0 text-center d-flex align-items-center justify-content-center">
+                        <i class="fa-sharp fa-solid fas fa-car-side" style="font-size:15px;"></i>
+                    </div>
+                    <span class="nav-link-text ms-1">Vehicle Management</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link  {{ is_current_route('qrcode.index') ? 'active' : '' }}"
+                    href="{{ route('qrcode.index') }}">
+                    <div
+                        class="icon icon-shape icon-sm px-0 text-center d-flex align-items-center justify-content-center">
+                        <i class="fa-sharp fa-solid fas fas fa-qrcode" style="font-size:15px;"></i>
+                    </div>
+                    <span class="nav-link-text ms-1">QR Code Management</span>
+                </a>
+            </li>
 
             <li class="nav-item">
                 <a class="nav-link {{ is_current_route('users.profile') ? 'active' : '' }}"
@@ -110,7 +113,8 @@
                         class="nav-link {{ is_current_route('logout') ? 'active' : '' }} btn btn-link">
                         <div
                             class="icon icon-shape icon-sm px-0 text-center d-flex align-items-center justify-content-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16px" viewBox="0 0 512 512">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16px"
+                                viewBox="0 0 512 512">
                                 <path
                                     d="M502.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-128-128c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L402.7 224 192 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l210.7 0-73.4 73.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l128-128zM160 96c17.7 0 32-14.3 32-32s-14.3-32-32-32L96 32C43 32 0 75 0 128L0 384c0 53 43 96 96 96l64 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-64 0c-17.7 0-32-14.3-32-32l0-256c0-17.7 14.3-32 32-32l64 0z"
                                     fill="#FFFFFF" />

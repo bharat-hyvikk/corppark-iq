@@ -8,38 +8,51 @@
             </div>
             <div class="modal-body">
                 <form action="{{ route('offices.save') }}" method="post" enctype="multipart/form-data"
-                    id="addUserForm">
+                    id="addUserForm" class="row">
                     @csrf
-                    <div class="mb-3">
+                    <div class="mb-3 col-6">
                         <label for="dealerName" class="form-label">Office Name</label>
                         <input type="text" class="form-control" name='name' aria-describedby="dealerNameHelp"
                             value="{{ old('dealerName') }}" class="form-control" autocomplete="">
                         <label class="bg-danger text-white  form-label w-100 mt-2 p-2 d-none" id="add_name"></label>
                     </div>
-                    <div class="mb-3">
+                    @if (auth()->user()->user_type == '1')
+                        <div class="mb-3 col-6">
+                            <label for="add_bulding_label" class="form-label">Building Name</label>
+                            <select class="form-select" id="add_bulding_label" name="building">
+                                <option value="" selected disabled>Select Building Name</option>
+                                @foreach ($buildings as $building)
+                                    <option value="{{ $building->id }}">{{ $building->building_name }}</option>
+                                @endforeach
+                            </select>
+                            <label class="bg-danger text-white  form-label w-100 mt-2 p-2 d-none"
+                                id="add_building"></label>
+                        </div>
+                    @endif
+                    <div class="mb-3 col-6">
                         <label for="owner_name" class="form-label">Owner Name</label>
                         <input type="text" class="form-control" name='owner_name' aria-describedby="dealerNameHelp"
                             class="form-control" autocomplete="">
                         <label class="bg-danger text-white  form-label w-100 mt-2 p-2 d-none"
                             id="add_owner_name"></label>
                     </div>
-                    <div class="mb-3">
+                    <div class="mb-3 col-6">
                         <label for="office_number" class="form-label">Office Number</label>
                         <input type="text" name="office_number" id="office_number" class="form-control">
                         <label class="bg-danger text-white  form-label w-100 mt-2 p-2 d-none"
                             id="add_office_number"></label>
                     </div>
-                    <div class="mb-3">
+                    <div class="mb-3 col-6">
                         <label for="dealeremail" class="form-label">Owner Email</label>
                         <input type="email" name="email" id="dealeremail" class="form-control">
                         <label class="bg-danger text-white  form-label w-100 mt-2 p-2 d-none" id="add_email"></label>
                     </div>
-                    <div class="mb-3">
+                    <div class="mb-3 col-6">
                         <label for="dealer_phone_number" class="form-label">Owner Phone Number</label>
                         <input type="text" name="phone" id="dealer_phone_number" class="form-control">
                         <label class="bg-danger text-white  form-label w-100 mt-2 p-2 d-none" id="add_phone"></label>
                     </div>
-                    <div class="mb-3">
+                    <div class="mb-3 col-6">
                         <label for="vehicle_limit" class="form-label">Vehicle Limit</label>
                         <input type="tel" name="vehicle_limit" id="vehicle_limit" class="form-control">
                         <label class="bg-danger text-white  form-label w-100 mt-2 p-2 d-none"
@@ -61,7 +74,7 @@
 </div>
 <script>
     $(document).ready(function() {
-       
+
         $("#addUserForm").submit(function(event) {
             event.preventDefault();
             $('#addUserBtn').find('span').text('Submitting');
@@ -106,6 +119,7 @@
                 },
                 error: function(xhr, status, error) {
                     let errors = xhr.responseJSON.errors; // Renamed to avoid conflict
+                    let PermissionMessage = xhr.responseJSON.permissionMessage;
                     $("#addUserBtn").attr('disabled', false);
                     $('#addUserBtn').find('i').removeClass('fa-spin').hide();
                     $('#addUserBtn').find('span').text('Submit');
@@ -116,7 +130,10 @@
                             $(label).html(message).addClass('d-none');
                         }, 5000);
                     });
-                    $("#errorMsgCustom").html("Failed to add Office");
+                    if (PermissionMessage) {
+                        $("#errorMsgCustom").text(PermissionMessage).show();
+                        $("#addModal").modal("hide");
+                    }
                     setTimeout(() => {
                         $("#errorMsgCustom").html('').hide();
                     }, 3000);

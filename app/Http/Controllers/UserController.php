@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Building;
 use App\Models\InvoiceMgmt;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Permission;
@@ -18,7 +20,15 @@ class  UserController extends Controller
      */
     public function index(Request $request)
     {
-        $users = User::latest()->whereIn('user_type', ['0', '2', '3']);
+
+
+        if (Auth::user()->user_type == "2") {
+            $users = User::latest()->where("building_id", Auth::user()->building_id)->whereIn("user_type", ["0", "3"]);
+        } else {
+            $users = User::latest()->whereIn('user_type', ['0', '2', '3']);
+        }
+
+        $buildings = Building::latest()->get();
         if ($request->ajax()) {
             $search = $request->search;
             $status = $request->status;
@@ -43,7 +53,7 @@ class  UserController extends Controller
             ]);
         }
         $users = $users->paginate(30);
-        return view('users.users-management', compact('users'));
+        return view('users.users-management', compact('users', 'buildings'));
     }
     /**
      * Show the form for creating a new resource.
@@ -57,6 +67,10 @@ class  UserController extends Controller
     {
         //
         // Validate the request data
+
+        if (Auth::user()->user_type == 2) {
+            $request->merge(['building' => Auth::user()->building_id]);
+        }
         $request->validate(
             [
                 'name' => 'required|string|max:255',
@@ -66,7 +80,21 @@ class  UserController extends Controller
                     'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{10,}$/'
                 ],
                 'phone' => 'required|numeric|digits:10|unique:users,phone',
-                'user_type' => 'required|in:0,2,3'
+                'user_type' => [
+                    "required",
+                    function ($attribute, $value, $fail) {
+                        // if user is admin then user type can be 0,2,3 and if user is manager it can be only 0,3
+                        if (Auth::user()->isManager && in_array($value, [0, 3])) {
+                            return;
+                        } elseif (Auth::user()->user_type == 1 && in_array($value, [0, 3, 2])) {
+                            return;
+                        } else {
+                            $fail("invalid user type");
+                        }
+                    }
+
+                ],
+                'building' => "required|exists:building,id"
             ],
             [
                 'password.required' => 'The password field is required.',
@@ -78,17 +106,29 @@ class  UserController extends Controller
 
             ]
         );
+
+        if (Auth::user()->user_type == "2" && $request->user_type == "2") {
+            // abort
+            return response()->json([
+                'message' => 'You can not create a manager for your building.',
+            ], 400);
+        }
         // Create a new user
 
         $user = new User();
         $user->name = $request->name;
+        if (Auth::user()->isManager) {
+            $user->building_id = Auth::user()->building_id;
+        } else {
+            $user->building_id = $request->building;
+        }
         $user->email = $request->email;
         $user->password = bcrypt($request->password);
         $user->phone = $request->phone;
         $user->user_type = $request->user_type;
         $user->status = "Active";
         // dd($user);
-        $permissions = $request->permissions;
+        $permissions = $request->permissions ?? [];
         $user->save();
         if ($user->user_type == '2') {
             $user->assignRole('manager');
@@ -107,7 +147,11 @@ class  UserController extends Controller
         $itemsPerPage = $request->input('itemsPerPage') ?? 100000;
         $curentPage = $request->input('currentPage', 1);
         $status = $request->status;
-        $users = User::latest()->whereIn('user_type', ['0', '2', '3']);
+        if (Auth::user()->user_type == "2") {
+            $users = User::latest()->where("building_id", Auth::user()->building_id)->whereIn("user_type", ["0", "3"]);
+        } else {
+            $users = User::latest()->whereIn('user_type', ['0', '2', '3']);
+        }
         $users = $users->where('name', 'like', "%$search%");
         if ($status) {
             $users = $users->where('status', $status);
@@ -186,6 +230,9 @@ class  UserController extends Controller
     public function update(Request $request)
     {
         //
+        if (Auth::user()->user_type == 2) {
+            $request->merge(['building' => Auth::user()->building_id]);
+        }
         $request->validate(
             [
                 'name' => 'required|string|max:255',
@@ -195,6 +242,22 @@ class  UserController extends Controller
                     'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{10,}$/'
                 ],
                 'phone' => 'required|numeric|digits:10|unique:users,phone,' . $request->id,
+                'building' => "required|exists:building,id",
+                'user_type' => [
+                    "required",
+                    function ($attribute, $value, $fail) {
+                        // if user is admin then user type can be 0,2,3 and if user is manager it can be only 0,3
+                        if (Auth::user()->isManager && in_array($value, [0, 3])) {
+                            return;
+                        } elseif (Auth::user()->user_type == 1 && in_array($value, [0, 3, 2])) {
+                            return;
+                        } else {
+                            $fail("invalid user type");
+                        }
+                    }
+
+                ]
+
             ],
             [
                 'password.regex' => 'The password must contain :<ul>
@@ -205,16 +268,35 @@ class  UserController extends Controller
             ]
         );
         // Create a new user
+
         $user = User::find($request->id);
+        if (Auth::user()->isManager && $user->building_id != Auth::user()->building_id) {
+            return response()->json(['error' => 'You can not edit this user'], 403);
+        }
         $user->name = $request->name;
         $user->email = $request->email;
+        $user->user_type = $request->user_type;
+
         if ($request->password) {
             $user->password = bcrypt($request->password);
         }
         $user->phone = $request->phone;
+        if (Auth::user()->isManager) {
+            $user->building_id = Auth::user()->building_id;
+        } else {
+            $user->building_id = $request->building;
+        }
         $user->save();
         $user->permissions()->detach();
-        $permissions = $request->permissions??[];
+        // deattach role
+        $user->roles()->detach();
+        if ($user->user_type == '2') {
+            $user->assignRole('manager');
+        } elseif ($user->user_type == '3') {
+            $user->assignRole('submanager');
+        }
+
+        $permissions = $request->permissions ?? [];
         $allPermissions = Permission::pluck('name')->toArray();
         foreach ($permissions as $permission) {
             // check permission before assigning if it exists or not 
@@ -226,7 +308,11 @@ class  UserController extends Controller
         $itemsPerPage = $request->input('itemsPerPage') ?? 100000;
         $curentPage = $request->input('currentPage', 1);
         $status = $request->status;
-        $users = User::latest()->whereIn('user_type', ['0', '2', '3']);
+        if (Auth::user()->user_type == "2") {
+            $users = User::latest()->where("building_id", Auth::user()->building_id)->whereIn("user_type", ["0", "3"]);
+        } else {
+            $users = User::latest()->whereIn('user_type', ['0', '2', '3']);
+        }
         if ($status) {
             $users = $users->where('status', $status);
         }
@@ -259,6 +345,12 @@ class  UserController extends Controller
         if (!$user) {
             return response()->json(['error' => 'User not found'], 404);
         }
+        if (Auth::user()->isManager && $user->building_id != Auth::user()->building_id) {
+            return response()->json(['error' => 'You can not delete this user'], 403);
+        }
+        // remove role and permissions
+        $user->roles()->detach();
+        $user->permissions()->detach();
         $user->delete();
         $search = $request->search;
         $itemsPerPage = $request->input('itemsPerPage') ?? 100000;

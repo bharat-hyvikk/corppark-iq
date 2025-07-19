@@ -17,4 +17,10 @@ class Building extends Model
         'building_address',
         'building_image',
     ];
+
+    // submanager
+    public function managers()
+    {
+        return $this->hasMany(User::class, 'building_id', 'id');
+    }
 }

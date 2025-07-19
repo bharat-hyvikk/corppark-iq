@@ -4,6 +4,12 @@
             <th class="text-secondary text-xs font-weight-semibold opacity-7">
                 User Name
             </th>
+            <th class="text-secondary text-xs font-weight-semibold opacity-7">
+                User Type
+            </th>
+            <th class="text-secondary text-xs font-weight-semibold opacity-7">
+                Building Name
+            </th>
             <th class="text-secondary text-xs font-weight-semibold opacity-7 ps-3">
                 Status
             </th>
@@ -32,11 +38,22 @@
                         </div>
                     </div>
                 </td>
+                <td class="align-middle text-start text-sm">
+                    <p class="text-sm text-dark font-weight-semibold mb-0 email ps-3">
+                        {{ $user->user_type == 0 ? 'Guard' : ($user->user_type == 2 ? 'Manager' : 'Sub Manager') }}
+                    </p>
+                </td>
+                <td class="align-middle text-start text-sm">
+                    <p class="text-sm text-dark font-weight-semibold mb-0 email ps-3">
+                        {{ $user->building->building_name ?? 'NA' }}
+                    </p>
+                </td>
+
 
                 <td class="align-middle text-start text-sm">
                     <a href="javascript:;" data-id="{{ $user->id }}"
                         class="text-secondary font-weight-bold text-xs mx-2">
-                        @if ($user->status=="Active")
+                        @if ($user->status == 'Active')
                             <i class="fa-sharp fa-solid fa-toggle-on toggle toggle-status" style="font-size:25px;"
                                 data-status="Active" data-id="{{ $user->id }}" data-bs-toggle="tooltip"
                                 data-bs-title="Deactivate user"></i>

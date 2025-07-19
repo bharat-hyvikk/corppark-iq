@@ -21,9 +21,15 @@ class AdminMiddlware
             return redirect()->route('sign-in');
         }
         // Check if the user is an admin (user_type = 0)
-        if (auth()->user()->user_type != 1) {
+        if (auth()->user()->user_type == 0) {
             Auth::logout();
             return redirect()->route('sign-in')->withErrors(['message' => 'You do not have admin access.']);
+        }
+
+        // if route name is user.manage and user type is 3
+        if (auth()->user()->user_type == 3 && request()->route()->getName() == 'users.manage') {
+            Auth::logout();
+            return redirect()->route('sign-in')->withErrors(['message' => 'You do not have user access.']);
         }
         return $next($request);
     }
