@@ -8,7 +8,7 @@
                     aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <p>Are you sure you want to delete this Vehicle? </p>
+                <p>Are you sure you want to delete this Building? </p>
             </div>
             <div class="modal-footer">
                 <form action="" id="deleteForm" method="post">
@@ -23,12 +23,12 @@
 </div>
 <script>
     $(document).ready(function() {
-        let toastTimeout; // Declare a variable to hold the timeout ID    
         $(document).on('click', '.delete-item', function() {
+            console.log('click');
             deletedealer = $(this).data('id'); // Get the vehicle ID
             let name = $(this).data("name");
             console.log(name);
-            $('#deleteModalLabel').text(`Delete Vehicle with Number : ${name}`);
+            $('#deleteModalLabel').text(`Delete Building : ${name}`);
             $('#deleteModal').modal('show'); // Show the modal
         });
         $('#confirmDelete').click(function(e) {
@@ -37,17 +37,15 @@
             let itemsPerPage = $('#itemsPerPage').val(); // Get selected items per page
             let currentPage = $('ul.pagination li.active span.page-link').text();
             let search = $('#search').val();
-            let filter = $('input[name="status_rdo"]:checked').val();
+            // let filter = $('input[name="status_rdo"]:checked').val();
             $.ajax({
                 type: "post",
-                url: "{{ route('vehicles.delete') }}",
+                url: "{{ route('buildings.delete') }}",
                 data: {
                     id: deletedealer,
                     itemsPerPage: itemsPerPage,
                     page: page,
                     search: search,
-                    status: filter,
-                    select_office: selectOffice
                 },
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

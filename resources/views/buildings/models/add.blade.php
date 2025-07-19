@@ -64,12 +64,14 @@ $(document).ready(function () {
             processData: false,
             success: function (response) {
                 $('#addBuildingBtn').attr('disabled', false);
+                $("#pageHeaderText").text(response.total);
                 $('#addBuildingBtn').find('i').removeClass('fa-spin').hide();
                 $('#addBuildingBtn').find('span').text('Submit');
 
                 $('#addModal').modal('hide');
                 $('#addBuildingForm')[0].reset();
                 $("#tableContainer").html(response.table);
+                // console.log(response);
 
                 $("#successMsgCustom").text(response.message).show();
                 setTimeout(() => {
@@ -101,82 +103,3 @@ $(document).ready(function () {
 });
 </script>
 
-{{-- <script>
-    $(document).ready(function() {
-
-        $("#addBuildingForm").submit(function(event) {
-            event.preventDefault();
-            $('#addBuildingBtn').find('span').text('Submitting');
-            $('#addBuildingBtn').find('i').addClass('fa-spin').show();
-            $("#addBuildingBtn").attr('disabled', true);
-            // var currentPage = $('ul.pagination li.active span.page-link').text();
-            let url = $(this).attr("action");
-            let data = $(this).serializeArray();
-
-            // let itemsPerPage = $('#itemsPerPage').val(); // Get selected items per page
-            // let query = $('#vehiclesSearch').val();
-        // let filter = $('input[name="status_rdo"]:checked').val();
-            // data.push({
-            //     name: 'itemsPerPage',
-            //     value: itemsPerPage
-            // });
-            // data.push({
-            //     name: 'search',
-            //     value: query
-            // });
-            // data.push({
-            //     name: 'currentPage',
-            //     value: currentPage
-            // });
-            // data.push({
-            //     name: 'status',
-            //     value: filter
-            // });
-            // // Add the selected page number to the data
-            // data.push({
-                name:"select_office",
-                value: selectOffice
-            });
-
-            $.ajax({
-                type: "post",
-                url: url,
-                data: data,
-                contentType: false,
-                processData: false,
-                success: function(response) {
-                    $("#addBuildingBtn").attr('disabled', false);
-                    // $("#pageHeaderText").text(response.total);
-                    $('#addBuildingBtn').find('i').removeClass('fa-spin').hide();
-                    $('#addBuildingBtn').find('span').text('Submit');
-                    $("#addModal").modal("hide");
-                    $("#addVehicleForm")[0].reset();
-                    $("#tableContainer").html(response.table);
-                    // $("#paginationContainer").html(response.pagination);
-                    $("#successMsgCustom").text(response.message).show();
-                    setTimeout(() => {
-                        $("#successMsgCustom").text('').hide();
-                    }, 3000);
-
-                },
-                error: function(xhr, status, error) {
-                    let errors = xhr.responseJSON.errors; // Renamed to avoid conflict
-                    $("#addBuildingBtn").attr('disabled', false);
-                    $('#addBuildingBtn').find('i').removeClass('fa-spin').hide();
-                    $('#addBuildingBtn').find('span').text('Submit');
-                    $.each(errors, function(key, message) {
-                        let label = $('#' + "add_" + key);
-                        $(label).html(message).removeClass('d-none');
-                        setTimeout(() => {
-                            $(label).html(message).addClass('d-none');
-                        }, 5000);
-                    });
-                    $("#errorMsgCustom").html("Failed to add vehicle");
-                    setTimeout(() => {
-                        $("#errorMsgCustom").html('').hide();
-                    }, 3000);
-                }
-            });
-        }); // Closing brace for the submit function
-    // }); // Closing brace for $(document).ready
-</script> --}}
