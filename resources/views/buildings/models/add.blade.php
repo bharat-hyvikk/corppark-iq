@@ -29,7 +29,7 @@
                         <input type="file" class="form-control" name='building_images'
                             aria-describedby="dealerNameHelp" class="form-control" autocomplete="">
                         <label class="bg-danger text-white  form-label w-100 mt-2 p-2 d-none"
-                            id="add_office_id"></label>
+                            id="add_building_images"></label>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
