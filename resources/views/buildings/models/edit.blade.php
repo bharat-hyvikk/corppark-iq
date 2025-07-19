@@ -2,38 +2,34 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="editModalLabel">Edit Vehicle</h5>
+                <h5 class="modal-title" id="editModalLabel">Edit Building</h5>
                 <button type="button" class="btn-close bg-secondary" data-bs-dismiss="modal"
                     aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form action="{{ route('vehicles.update') }}" method="post" enctype="multipart/form-data"
+                <form action="{{ route('buildings.update') }}" method="post" enctype="multipart/form-data"
                     id="updateForm">
                     @csrf
                    <div class="mb-3">
-                        <label class="form-label">Vehicle Number</label>
-                        <input type="text" class="form-control" name='vehicle_number'
+                        <label class="form-label">Building Name</label>
+                        <input type="text" class="form-control" name='building_name'
                             aria-describedby="dealerNameHelp" class="form-control" autocomplete="">
                         <label class="bg-danger text-white  form-label w-100 mt-2 p-2 d-none"
-                            id="edit_vehicle_number"></label>
+                            id="edit_building_name"></label>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Owner Number</label>
-                        <input type="tel" class="form-control" name='phone' aria-describedby="dealerNameHelp"
-                            class="form-control" autocomplete="">
+                        <label class="form-label">Building Address</label>
+                        <textarea class="form-control" name='building_address' aria-describedby="dealerNameHelp" class="form-control"
+                            autocomplete="off"></textarea>
                         <label class="bg-danger text-white  form-label w-100 mt-2 p-2 d-none"
-                            id="edit_phone"></label>
+                            id="edit_building_address"></label>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Select Office</label>
-                        <select name="office_id" id="office_id" class="form-control">
-                            <option value="">Select Office</option>
-                            @foreach ($offices as $office)
-                                <option value="{{ $office->id }}">{{ $office->office_name }}</option>
-                            @endforeach
-                        </select>
+                        <label class="form-label">Building Image</label>
+                        <input type="file" class="form-control" name='building_image' aria-describedby="dealerNameHelp"
+                            class="form-control">
                         <label class="bg-danger text-white  form-label w-100 mt-2 p-2 d-none"
-                            id="edit_office_id"></label>
+                            id="edit_building_image"></label>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -51,14 +47,12 @@
 <script>
     let dealerId;
     $(document).ready(function() {
-       
+        $(document).on("click", "#editBuildingBtn", function() {
 
-        $(document).on("click", "#editVehicleBtn", function() {
-            
             dealerId = $(this).data('id');
             $.ajax({
                 method: "post",
-                url: "{{ route('vehicles.edit') }}",
+                url: "{{ route('buildings.edit') }}",
                 data: {
                     id: $(this).data('id')
                 },
@@ -66,10 +60,8 @@
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
                 success: function(response) {
-                    $("[name='vehicle_number']").val(response.vehicle.vehicle_number);
-                    $("[name='office_id']").val(response.vehicle.office_id)
-                    $("[name='email']").val(response.vehicle.email);
-                    $("[name='phone']").val(response.vehicle.owner_phone);
+                    $("[name='building_name']").val(response.building.building_name);
+                    $("[name='building_address']").val(response.building.building_address);
                     $("#editModal").modal("show");
 
                 },
@@ -91,33 +83,12 @@
         let data = $(this).serializeArray();
         let itemsPerPage = $('#itemsPerPage').val(); // Get selected items per page
         let query = $('#search').val();
-        let filter = $('input[name="status_rdo"]:checked').val();
+        // let filter = $('input[name="status_rdo"]:checked').val();
         console.log(dealerId);
-        data.push({
-            name: 'itemsPerPage',
-            value: itemsPerPage
-        });
         data.push({
             name: "id",
             value: dealerId
         })
-        data.push({
-            name: 'search',
-            value: query
-        });
-        data.push({
-            name: 'currentPage',
-            value: currentPage
-        });
-        data.push({
-            name: 'status',
-            value: filter
-        });
-         data.push({
-                name:"select_office",
-                value: selectOffice
-            });
-
         $.ajax({
             type: "post",
             url: url,

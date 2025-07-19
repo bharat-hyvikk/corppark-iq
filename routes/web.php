@@ -127,8 +127,8 @@ route::prefix('buildings')
         route::get('manage', [BuildingController::class, 'index'])->name('buildings.manage');
         route::post('save', [BuildingController::class, 'store'])->name('buildings.save');
         route::post('edit', [BuildingController::class, 'edit'])->name('buildings.edit');
-        // route::post('update', [VehicleController::class, 'update'])->name('vehicles.update');
-        // route::post('delete', [VehicleController::class, 'destroy'])->name('vehicles.delete');
+        route::post('update', [BuildingController::class, 'update'])->name('buildings.update');
+        route::post('delete', [BuildingController::class, 'destroy'])->name('buildings.delete');
     });
 
 // ** Qr Code Management

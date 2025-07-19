@@ -8,8 +8,9 @@
         @include('VehicleManage.model.edit')
         @include('VehicleManage.model.confirm') --}}
         @include('buildings.models.add')
-        {{-- @include('vehicles.models.edit')
-        @include('vehicles.models.confirm') --}}
+        @include('buildings.models.edit')
+        @include('buildings.models.confirm')
+        @include('buildings.models.media')
         <div class="container-fluid py-4 px-5 flex-grow-1 wrapper">
             <div class="alert alert-success text-center p-1 mb-2 custom-alert" id="successMsgCustom"
                 style="display: none;">
@@ -25,7 +26,7 @@
                             <div id="totalContainer">
                                 <h3 class="text-white mb-2" id="pageHeaderTitle">Total Building</h3>
                                 <p class="mb-4 font-weight-semibold" id="pageHeaderText">
-                                    {{-- {{ $vehicles->total() }} --}}
+                                    {{ $building->total() }}
                                 </p>
                             </div>
                             <h3 class="text-white mb-2" id="search-msg"></h3>
@@ -122,9 +123,9 @@
                                 </div>
                             </div>
                             <div class="table-responsive p-0" id="tableContainer">
-                                {{-- @include('vehicles.partials.vehicles_table', [
-                                    'vehicles' => $vehicles,
-                                ]) --}}
+                                @include('buildings.partials.buildings_table', [
+                                    'building' => $building,
+                                ])
                             </div>
                             {{-- <div class="border-top py-3 px-3 d-flex align-items-center">
                                 <p class="font-weight-semibold mb-0 text-dark text-sm">Page 1 of 10</p>
@@ -145,17 +146,10 @@
 </x-app-layout>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    let selectOffice;
-    $('#multiSectionModal').on('shown.bs.modal', function() {
-        $('#personal-tab').trigger('click');
-    });
     $("#addModalBtn").click(function() {
         // reset form  addVehicleForm
-        $("#addVehicleForm")[0].reset();
+        $("#addBuildingForm")[0].reset();
     })
-    $(document).on("click", 'input[name="status_rdo"]', function() {
-        filterTable();
-    });
     var timeout;
     $("#search").on("keyup", function() {
         console.log("search");
@@ -174,21 +168,15 @@
         let searchInput = $('#search').val().toLowerCase();
         let itemsPerPage = $('#itemsPerPage').val();
         //get the select office value
-        selectOffice = $('#select_office').val();
         //get ship name selectship
-        let shipName = $('#selectship').val();
         //get the btnradiotable value
-        let status = $("[name='status_rdo']:checked").val();
-        console.log(status);
         $.ajax({
             type: "GET",
-            url: "vehicles/manage",
+            url: "buildings/manage",
             data: {
                 search: searchInput,
                 itemsPerPage: itemsPerPage,
                 page: $page,
-                status: status,
-                select_office: selectOffice,
             },
             success: function(response) {
                 $('#tableContainer').html(response.table);
