@@ -68,9 +68,11 @@
             display: inline-block;
             cursor: not-allowed;
         }
-.modal {
-    overflow-y: auto !important;
-}
+
+        .modal {
+            overflow-y: auto !important;
+        }
+
         .icon-wrapper .overlay-slash {
             position: absolute;
             top: 4px;
@@ -498,8 +500,16 @@
         // Run once on initial page load
         $(document).ready(function() {
             initTooltips();
+            $.ajaxSetup({
+                data: {
+                    building_id: function() {
+                        return $('#select_building').val() || null;
+                    }
+                }
+            });
             $(document).ajaxComplete(function() {
-                console.log("AJAX complete");
+                selectBuilding = $('#select_building').val();
+
                 initTooltips();
             });
         });

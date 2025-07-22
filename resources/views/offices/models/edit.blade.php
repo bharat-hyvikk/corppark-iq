@@ -158,7 +158,7 @@
             },
             error: function(xhr, status, error) {
                 let errors = xhr.responseJSON.errors; // Renamed to avoid conflict
-                let PermissionMessage = xhr.responseJSON.permissionMessage;
+                let PermissionMessage = xhr.responseJSON.message;
                 console.log(xhr.responseJSON);
                 $("#updateUserBtn").attr('disabled', false);
                 $('#updateUserBtn').find('i').removeClass('fa-spin').hide();
@@ -171,14 +171,15 @@
                         $(label).html(message).addClass('d-none');
                     }, 5000);
                 });
-                if (PermissionMessage) {
+                if (PermissionMessage && xhr.status == '403') {
                     $("#editOfficeModal").modal("hide");
 
                     $("#errorMsgCustom").text(PermissionMessage).show();
+                    setTimeout(() => {
+                        $("#errorMsgCustom").html('').hide();
+                    }, 3000);
                 }
-                setTimeout(() => {
-                    $("#errorMsgCustom").html('').hide();
-                }, 3000);
+
             }
         });
     }); // Closing brace for the submit function

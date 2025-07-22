@@ -28,7 +28,6 @@ class LoginController extends Controller
         // auth attempt
         if (auth()->attempt($request->only('email', 'password'))) {
             $user = auth()->user();
-            dd("here");
             if ($user->status == "Inactive") {
                 return response()->json([
                     'success' => 0,

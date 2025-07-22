@@ -11,6 +11,7 @@
         </tr>
     </thead>
     <tbody id="qr_table_body">
+        @if($qrs)
         @foreach ($qrs as $qrcode)
             <tr id="vehicle-{{ $qrcode->id }}">
                 @if ($qrcode->qrCode)
@@ -51,7 +52,7 @@
 
                     @if ($qrcode->qrCode)
 
-                        <a href="{{route('qrcode.download', $qrcode->id)}}"
+                        <a href="{{route('qrcode.download', $qrcode->qrCode->id)}}"
                             class="text-secondary font-weight-bold text-xs mx-2" data-bs-toggle="tooltip"
                             data-bs-title="Download QR" >
                             <i class="fa-sharp fa-solid fa-download" style="font-size:17px;"></i>
@@ -75,6 +76,7 @@
                 </td> --}}
             </tr>
         @endforeach
+        @endif
     </tbody>
     {{-- <tbody id="qr_table_body">
         @foreach ($Qr as $vehicle) 
@@ -112,5 +114,7 @@
     </tbody> --}}
 </table>
 <div class="ms-auto mt-2 fw-bold" id="paginationContainer">
-    {{ $qrs->links('pagination::bootstrap-5') }}
+    @if ($qrs)
+        {{ $qrs->links('pagination::bootstrap-5') }}
+    @endif
 </div>

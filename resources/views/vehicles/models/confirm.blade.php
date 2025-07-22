@@ -64,11 +64,15 @@
                 },
                 error: function(xhr, status, error) {
                     let errors = xhr.responseJSON.errors;
+                    let PermissionMessage = xhr.responseJSON.message;
 
-                    $("#errorMsgCustom").text("Failed to delete vehicle");
-                    setTimeout(() => {
-                        $("#errorMsgCustom").text('').hide();
-                    }, 3000);
+                    if (PermissionMessage && xhr.status == 403) {
+                        $("#errorMsgCustom").text(PermissionMessage).show();
+                        $("#deleteModal").modal("hide");
+                        setTimeout(() => {
+                            $("#errorMsgCustom").text('').hide();
+                        }, 3000);
+                    }
                 }
             });
         });

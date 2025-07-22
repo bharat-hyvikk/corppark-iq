@@ -11,9 +11,15 @@
                             <h3 class="font-weight-bold mb-0">
                                 Welcome {{ auth()->user()->name }}
                             </h3>
+                            @if(auth()->user()->isAdmin)
+                            <p>
+                                See information about Users,Buildings,Offices,Vehicles and QR related Modules.
+                            </p>
+                            @else
                             <p>
                                 See information about Users,Offices,Vehicles and QR related Modules.
                             </p>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -48,12 +54,42 @@
                         </div>
                     </div>
                 </div>
+                @if(Auth::user()->isAdmin)
                 <div class="col-xl-2 col-sm-6 mb-xl-0">
                     <div class="card border shadow-xs mb-4">
                         <div class="card-body text-start p-3 w-100">
                             <div
                                 class="icon icon-shape icon-sm bg-dark text-white text-center border-radius-sm d-flex align-items-center justify-content-center mb-3">
-                                <i class="fa-sharp fa-solid fas far fa-building" aria-hidden="true"
+                                <i class="fa-sharp fa-solid fas far fas fa-briefcase" aria-hidden="true"
+                                    style="
+                                        font-size: 16px;
+                                        colur: #fff;
+                                        background-color: #1e293b !important;
+                                        opacity: 1;
+                                    "></i>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="w-100">
+                                        <p class="text-sm text-secondary mb-1">
+                                            Buildings
+                                        </p>
+                                        <h4 class="mb-2 font-weight-bold">
+                                            {{ $totalBuildings }}
+                                        </h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @endif
+                <div class="col-xl-2 col-sm-6 mb-xl-0">
+                    <div class="card border shadow-xs mb-4">
+                        <div class="card-body text-start p-3 w-100">
+                            <div
+                                class="icon icon-shape icon-sm bg-dark text-white text-center border-radius-sm d-flex align-items-center justify-content-center mb-3">
+                                <i class="fa-sharp fa-solid fas far fas fa-briefcase" aria-hidden="true"
                                     style="
                                         font-size: 16px;
                                         colur: #fff;

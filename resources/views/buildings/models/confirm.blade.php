@@ -62,11 +62,16 @@
                 },
                 error: function(xhr, status, error) {
                     let errors = xhr.responseJSON.errors;
+                    let message = xhr.responseJSON.deleteMessage;
+                    console.log(message);
+                     $('#deleteModal').modal('hide'); // Hide the modal
+                    if (message) {
+                        $("#errorMsgCustom").text(message).show();
+                        setTimeout(() => {
+                            $("#errorMsgCustom").text('').hide();
+                        }, 3000);
+                    }
 
-                    $("#errorMsgCustom").text("Failed to delete vehicle");
-                    setTimeout(() => {
-                        $("#errorMsgCustom").text('').hide();
-                    }, 3000);
                 }
             });
         });

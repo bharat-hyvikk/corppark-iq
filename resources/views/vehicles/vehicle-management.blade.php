@@ -45,24 +45,26 @@
                                     <h6 class="font-weight-semibold text-lg mb-0">Vehicle list</h6>
                                     <p class="text-sm">See information about all vehicle</p>
                                 </div>
-                                <div class="ms-auto d-flex">
-                                    {{-- <button type="button" class="btn btn-sm btn-white me-2">
+                                @if (auth()->user()->user_type == '1' || auth()->user()->can('vehicle.add'))
+                                    <div class="ms-auto d-flex">
+                                        {{-- <button type="button" class="btn btn-sm btn-white me-2">
                                         View all
                                     </button> --}}
-                                    <button type="button" data-bs-toggle="modal" data-bs-target="#addModal"
-                                        class="btn btn-sm btn-icon d-flex align-items-center me-2" id="addModalBtn"
-                                        style="background-color:#735bfc">
-                                        <span class="btn-inner--icon d-flex flex-row align-items-center me-2">
-                                            <!-- Changed to flex-column for vertical stacking -->
-                                            <i class="fa-sharp fa-solid far fas fa-car-side"
-                                                style="font-size: 0.75rem;margin-right:15%; color:#fff;"></i>
-                                            <!-- Book icon below -->
-                                            <i class="fa-sharp fa-solid fa-plus" style="color:#fff;"></i>
-                                            <!-- Plus icon on top -->
-                                        </span>
-                                        <span class="btn-inner--text" style="color:#fff">Add Vehicle</span>
-                                    </button>
-                                </div>
+                                        <button type="button" data-bs-toggle="modal" data-bs-target="#addModal"
+                                            class="btn btn-sm btn-icon d-flex align-items-center me-2" id="addModalBtn"
+                                            style="background-color:#735bfc">
+                                            <span class="btn-inner--icon d-flex flex-row align-items-center me-2">
+                                                <!-- Changed to flex-column for vertical stacking -->
+                                                <i class="fa-sharp fa-solid far fas fa-car-side"
+                                                    style="font-size: 0.75rem;margin-right:15%; color:#fff;"></i>
+                                                <!-- Book icon below -->
+                                                <i class="fa-sharp fa-solid fa-plus" style="color:#fff;"></i>
+                                                <!-- Plus icon on top -->
+                                            </span>
+                                            <span class="btn-inner--text" style="color:#fff">Add Vehicle</span>
+                                        </button>
+                                    </div>
+                                @endif
                             </div>
                         </div>
                         <div class="card-body px-0 py-0">
@@ -83,20 +85,39 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="row align-items-center perpage ms-auto">
-                                    <div class="col-auto">
-                                        <label for="itemsPerPage" class="fw-semibold mb-0">Select Office:</label>
+                                @if (Auth::user()->isAdmin)
+                                    <div class="row align-items-center perpage ms-auto">
+                                        <div class="col-auto">
+                                            <label for="itemsPerPage" class="fw-semibold mb-0">Select Building:</label>
+                                        </div>
+                                        <div class="col-auto">
+                                            <select id="select_building" name="select_building" onchange="filterTable()"
+                                                class="form-select form-select-md" style="padding-right:50px;">
+                                                <option value="" class="text-left">All</option>
+                                                @foreach ($buildings as $building)
+                                                    <option value="{{ $building->id }}">{{ $building->building_name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
                                     </div>
-                                    <div class="col-auto">
-                                        <select id="select_office" name="select_office" onchange="filterTable()"
-                                            class="form-select form-select-md" style="padding-right:50px;">
-                                            <option value="" class="text-left">All</option>
-                                            @foreach ($offices as $office)
-                                                <option value="{{ $office->id }}">{{ $office->office_name }}</option>
-                                            @endforeach
-                                        </select>
+                                @else
+                                    <div class="row align-items-center perpage ms-auto">
+                                        <div class="col-auto">
+                                            <label for="itemsPerPage" class="fw-semibold mb-0">Select Office:</label>
+                                        </div>
+                                        <div class="col-auto">
+                                            <select id="select_office" name="select_office" onchange="filterTable()"
+                                                class="form-select form-select-md" style="padding-right:50px;">
+                                                <option value="" class="text-left">All</option>
+                                                @foreach ($offices as $office)
+                                                    <option value="{{ $office->id }}">{{ $office->office_name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
                                     </div>
-                                </div>
+                                @endif
                                 <div class="btn-group ms-auto mx-3" role="group"
                                     aria-label="Basic radio toggle button group">
                                     <input type="radio" class="btn-check" name="status_rdo" id="reset_btn"

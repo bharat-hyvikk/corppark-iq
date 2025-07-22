@@ -21,8 +21,7 @@
                         <label class="form-label">Owner Number</label>
                         <input type="tel" class="form-control" name='phone' aria-describedby="dealerNameHelp"
                             class="form-control" autocomplete="">
-                        <label class="bg-danger text-white  form-label w-100 mt-2 p-2 d-none"
-                            id="add_phone"></label>
+                        <label class="bg-danger text-white  form-label w-100 mt-2 p-2 d-none" id="add_phone"></label>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Select Office</label>
@@ -50,7 +49,6 @@
 </div>
 <script>
     $(document).ready(function() {
-
         $("#addVehicleForm").submit(function(event) {
             event.preventDefault();
             $('#addVehicleBtn').find('span').text('Submitting');
@@ -61,7 +59,7 @@
             let data = $(this).serializeArray();
             let itemsPerPage = $('#itemsPerPage').val(); // Get selected items per page
             let query = $('#vehiclesSearch').val();
-        let filter = $('input[name="status_rdo"]:checked').val();
+            let filter = $('input[name="status_rdo"]:checked').val();
             data.push({
                 name: 'itemsPerPage',
                 value: itemsPerPage
@@ -80,7 +78,7 @@
             });
             // Add the selected page number to the data
             data.push({
-                name:"select_office",
+                name: "select_office",
                 value: selectOffice
             });
 
@@ -105,6 +103,8 @@
                 },
                 error: function(xhr, status, error) {
                     let errors = xhr.responseJSON.errors; // Renamed to avoid conflict
+                    let PermissionMessage = xhr.responseJSON.message;
+
                     $("#addVehicleBtn").attr('disabled', false);
                     $('#addVehicleBtn').find('i').removeClass('fa-spin').hide();
                     $('#addVehicleBtn').find('span').text('Submit');
@@ -115,10 +115,13 @@
                             $(label).html(message).addClass('d-none');
                         }, 5000);
                     });
-                    $("#errorMsgCustom").html("Failed to add vehicle");
-                    setTimeout(() => {
-                        $("#errorMsgCustom").html('').hide();
-                    }, 3000);
+                    if (PermissionMessage && xhr.status == 403) {
+                        $("#errorMsgCustom").text(PermissionMessage).show();
+                        $("#addModal").modal("hide");
+                        setTimeout(() => {
+                            $("#errorMsgCustom").html('').hide();
+                        }, 3000);
+                    }
                 }
             });
         }); // Closing brace for the submit function

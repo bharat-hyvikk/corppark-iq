@@ -15,7 +15,7 @@
             <div class="alert alert-success text-center p-1 mb-2 custom-alert" id="successMsgCustom"
                 style="display: none;">
             </div>
-            <div class="alert alert-danger text-center p-1 mb-2 custom-alert" id="errorMsgCustom" style="display: none">
+              <div class="alert alert-danger text-center p-1 mb-2 custom-alert" id="errorMsgCustom" style="display: none">
             </div>
             <div class="row">
                 <div class="col-12">
@@ -55,7 +55,7 @@
                                         style="background-color:#735bfc">
                                         <span class="btn-inner--icon d-flex flex-row align-items-center me-2">
                                             <!-- Changed to flex-column for vertical stacking -->
-                                            <i class="fa-sharp fa-solid far fas fa-car-side"
+                                            <i class="fa-sharp fa-solid far fas fa-building"
                                                 style="font-size: 0.75rem;margin-right:15%; color:#fff;"></i>
                                             <!-- Book icon below -->
                                             <i class="fa-sharp fa-solid fa-plus" style="color:#fff;"></i>

@@ -64,25 +64,48 @@
             <div class="row">
                 <div class="col-12">
                     <div class="card border shadow-xs mb-4">
-                        <div class="card-header border-bottom pb-0">
-                            <div class="row">
-                                <div class="col-6"> <!-- Set the width to 50% using col-6 -->
-                                    <h6 class="font-weight-semibold text-lg mb-0">Select Office</h6>
-                                    <select id="office-select" class="form-select" style="margin-bottom:2%;">
-                                        <option value="">All Office</option>
-                                        @foreach ($offices as $office)
-                                            <option value="{{ $office->id }}" data-slug="{{ $office->slug }}"
-                                                {{ request()->query('id') == $office->id ? 'selected' : '' }}>
-                                                {{ $office->office_name }}</option>
-                                        @endforeach
-                                    </select>
+                        <div class="card-header border-bottom pb-0 border-bottom">
+                            @if (Auth::user()->isAdmin)
+                                <div class="row">
+                                    <div class="col-6"> <!-- Set the width to 50% using col-6 -->
+                                        <h6 class="font-weight-semibold text-lg mb-0">Select Building</h6>
+                                        <select id="building-select" class="form-select" style="margin-bottom:2%;">\
+                                            <option value="" selected disabled>select Building</option>
+                                            @foreach ($buildings as $building)
+                                                <option value="{{ $building->id }}"
+                                                    {{ request()->query('buildingid') == $building->id ? 'selected' : '' }}>
+                                                    {{ $building->building_name }}</option>
+                                            @endforeach
+                                        </select>
 
-                                </div>
-                                {{-- <div class="col-5 m-auto" style="margin-left: 5%">
+                                    </div>
+                                    {{-- <div class="col-5 m-auto" style="margin-left: 5%">
                                         <h6 class="font-weight-semibold text-lg mb-0 mt-4 mx-8">Total  QR:
                                             {{ $totalQrVehiclesCount }}</h6> <!-- Display total count -->
                                     </div> --}}
-                            </div>
+                                </div>
+                            @else
+                                <div class="row">
+                                    <div class="col-6"> <!-- Set the width to 50% using col-6 -->
+                                        <h6 class="font-weight-semibold text-lg mb-0">Select Office</h6>
+                                        <select id="office-select" class="form-select" style="margin-bottom:2%;">
+                                            <option value="">All Office</option>
+                                            @foreach ($offices as $office)
+                                                <option value="{{ $office->id }}" data-slug="{{ $office->slug }}"
+                                                    {{ request()->query('id') == $office->id ? 'selected' : '' }}>
+                                                    {{ $office->office_name }}</option>
+                                            @endforeach
+                                        </select>
+
+                                    </div>
+                                </div>
+
+
+                            @endif
+                            {{-- <div class="col-5 m-auto" style="margin-left: 5%">
+                                        <h6 class="font-weight-semibold text-lg mb-0 mt-4 mx-8">Total  QR:
+                                            {{ $totalQrVehiclesCount }}</h6> <!-- Display total count -->
+                                    </div> --}}
 
                             <div class="d-sm-flex align-items-start border-top mt-2">
                                 <!-- Changed align-items-center to align-items-start for vertical alignment -->
@@ -91,14 +114,26 @@
                                     <p class="text-sm">See information about all QR</p>
                                 </div>
                                 <div class="ms-auto d-flex mt-3">
-                                    <a href="{{ route('qrcode.download', ['officeName' => request()->route('officeName'), 'officeId' => request()->query('id')]) }}"
-                                        class="btn btn-sm btn-dark btn-icon me-2">
-                                        <span class="btn-inner--icon">
-                                            <i class="fa-sharp fa-solid fa-download"
-                                                style="font-size: 0.75rem; margin-right: 0.2rem;"></i>
-                                        </span>
-                                        <span class="btn-inner--text">Download Bulk QR</span>
-                                    </a>
+                                    @if (Auth::user()->isAdmin)
+                                        <a href="{{ route('qrcode.download', ['officeName' => request()->route('officeName'), 'buildingid' => request()->query('buildingid')]) }}"
+                                            class="btn btn-sm btn-dark btn-i4con me-2">
+                                            <span class="btn-inner--icon">
+                                                <i class="fa-sharp fa-solid fa-download"
+                                                    style="font-size: 0.75rem; margin-right: 0.2rem;"></i>
+                                            </span>
+                                            <span class="btn-inner--text">Download Bulk QR</span>
+                                        </a>
+                                    @else
+                                        <a href="{{ route('qrcode.download', ['officeName' => request()->route('officeName'), 'officeId' => request()->query('id')]) }}"
+                                            class="btn btn-sm btn-dark btn-icon me-2">
+                                            <span class="btn-inner--icon">
+                                                <i class="fa-sharp fa-solid fa-download"
+                                                    style="font-size: 0.75rem; margin-right: 0.2rem;"></i>
+                                            </span>
+                                            <span class="btn-inner--text">Download Bulk QR</span>
+                                        </a>
+                                    @endif
+                                    @if(Auth::user()->isAdmin || Auth::user()->can("qr.generate"))
                                     <button type="submit"
                                         class="btn btn-sm btn-dark btn-icon me-2 d-flex align-items-center"
                                         data-bs-toggle="modal" data-bs-target="#generateQRModal">
@@ -110,6 +145,7 @@
                                             style="display: none; font-size: 0.75rem; margin-right: 0.2rem;"></i>
                                         <span class="btn-inner--text" id="qrBtnText">Generate Bulk QR</span>
                                     </button>
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -197,8 +233,17 @@
                 // Redirect to the route with the selected officeName (slug)
                 window.location.href = '{{ route('qrcode.index') }}' + '?id=' +
                     officeId;
+            } else {
+                window.location.href = '{{ route('qrcode.index') }}';
             }
-            else{
+        });
+        $('#building-select').on('change', function() {
+            var buildingId = $(this).find(':selected').val(); //
+            if (buildingId) {
+                // Redirect to the route with the selected officeName (slug)
+                window.location.href = '{{ route('qrcode.index') }}' + '?buildingid=' +
+                    buildingId;
+            } else {
                 window.location.href = '{{ route('qrcode.index') }}';
             }
         });
@@ -246,6 +291,9 @@
             $('#qrSpinner').show(); // Show spinner
             $('#qrIcon').hide(); // Hide QR icon
             $('#qrBtnText').text('Generating'); // Change button text to 'Generating...'
+
+            let officeId = $('#office-select').val();
+            let buildingId = $('#building-select').val();
             customUrl = $('#qrForm').attr("action");
             let generateQrUrl =
                 "{{ route('qrcode.generate', ['id' => request()->query('id')]) }}";
@@ -274,6 +322,12 @@
                 type: 'hidden',
                 name: 'selected_vehicles',
                 value: JSON.stringify(selectedVehicles) // Store as JSON string
+            }).appendTo('#qrForm');
+            // append buildingId and officeId to the form
+            $('<input>').attr({
+                type: 'hidden',
+                name: 'building_id',
+                value: buildingId
             }).appendTo('#qrForm');
             $('<input>').attr({
                 type: 'hidden',

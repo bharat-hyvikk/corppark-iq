@@ -45,10 +45,19 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Building::class);
     }
+    
 
     // define isManger
     public function getIsManagerAttribute()
     {
         return $this->user_type == '2';
+    }
+    public function getIsSubManagerAttribute()
+    {
+        return $this->user_type == '3';
+    }
+    public function getIsAdminAttribute()
+    {
+        return $this->user_type == '1';
     }
 }

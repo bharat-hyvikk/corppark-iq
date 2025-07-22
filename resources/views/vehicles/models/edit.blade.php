@@ -10,7 +10,7 @@
                 <form action="{{ route('vehicles.update') }}" method="post" enctype="multipart/form-data"
                     id="updateForm">
                     @csrf
-                   <div class="mb-3">
+                    <div class="mb-3">
                         <label class="form-label">Vehicle Number</label>
                         <input type="text" class="form-control" name='vehicle_number'
                             aria-describedby="dealerNameHelp" class="form-control" autocomplete="">
@@ -21,8 +21,7 @@
                         <label class="form-label">Owner Number</label>
                         <input type="tel" class="form-control" name='phone' aria-describedby="dealerNameHelp"
                             class="form-control" autocomplete="">
-                        <label class="bg-danger text-white  form-label w-100 mt-2 p-2 d-none"
-                            id="edit_phone"></label>
+                        <label class="bg-danger text-white  form-label w-100 mt-2 p-2 d-none" id="edit_phone"></label>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Select Office</label>
@@ -51,10 +50,10 @@
 <script>
     let dealerId;
     $(document).ready(function() {
-       
+
 
         $(document).on("click", "#editVehicleBtn", function() {
-            
+
             dealerId = $(this).data('id');
             $.ajax({
                 method: "post",
@@ -113,10 +112,10 @@
             name: 'status',
             value: filter
         });
-         data.push({
-                name:"select_office",
-                value: selectOffice
-            });
+        data.push({
+            name: "select_office",
+            value: selectOffice
+        });
 
         $.ajax({
             type: "post",
@@ -139,6 +138,8 @@
             },
             error: function(xhr, status, error) {
                 let errors = xhr.responseJSON.errors; // Renamed to avoid conflict
+                let PermissionMessage = xhr.responseJSON.message;
+
                 $("#updateVehicleBtn").attr('disabled', false);
                 $('#updateVehicleBtn').find('i').removeClass('fa-spin').hide();
                 $('#updateVehicleBtn').find('span').text('Submit');
@@ -149,10 +150,13 @@
                         $(label).html(message).addClass('d-none');
                     }, 5000);
                 });
-                $("#errorMsgCustom").html("Failed to add vehicle");
-                setTimeout(() => {
-                    $("#errorMsgCustom").html('').hide();
-                }, 3000);
+                if (PermissionMessage && xhr.status == 403) {
+                    $("#errorMsgCustom").text(PermissionMessage).show();
+                    $("#editModal").modal("hide");
+                    setTimeout(() => {
+                        $("#errorMsgCustom").text('').hide();
+                    }, 3000);
+                }
             }
         });
     }); // Closing brace for the submit function

@@ -82,6 +82,11 @@ return [
             'path' => storage_path('logs/daily-check-in/'.date('Y').'/'.date('F').'/'. date('Y-m-d') . '.log'),
             'level' => 'info',
         ],
+        'daily_check_in_dynamic' => [
+            'driver' => 'single',
+            'path' => 'placeholder',
+            'level' => 'info',
+        ],
 
         'slack' => [
             'driver' => 'slack',

@@ -45,23 +45,24 @@
                                     <h6 class="font-weight-semibold text-lg mb-0">Office list</h6>
                                     <p class="text-sm">See information about all Office</p>
                                 </div>
-                            @if(auth()->user()->user_type == '1' || auth()->user()->can("office.add"))
-                                <div class="ms-auto d-flex">
-                                    <div>
-                                        <button type="button" data-bs-toggle="modal" data-bs-target="#addModal"
-                                            style="background-color:#735bfc"
-                                            class="btn btn-sm  btn-icon d-flex align-items-center me-2">
-                                            <span class="btn-inner--icon d-flex flex-row align-items-center me-2">
-                                                <!-- Changed to flex-column for vertical stacking -->
-                                                <i class="fa-sharp fa-solid far fa-building"
-                                                    style="font-size: 0.75rem;margin-right:15%; color:#fff;"></i>
-                                                <!-- Book icon below -->
-                                                <i class="fa-sharp fa-solid fa-plus" style="color:#fff;"></i> <!-- Plus icon on top -->
-                                            </span>
-                                            <span class="btn-inner--text" style="color:#fff">Add Office</span>
-                                        </button>
+                                @if (auth()->user()->user_type == '1' || auth()->user()->can('office.add'))
+                                    <div class="ms-auto d-flex">
+                                        <div>
+                                            <button type="button" data-bs-toggle="modal" data-bs-target="#addModal"
+                                                style="background-color:#735bfc"
+                                                class="btn btn-sm  btn-icon d-flex align-items-center me-2">
+                                                <span class="btn-inner--icon d-flex flex-row align-items-center me-2">
+                                                    <!-- Changed to flex-column for vertical stacking -->
+                                                    <i class="fa-sharp fa-solid far fas fa-briefcase"
+                                                        style="font-size: 0.75rem;margin-right:15%; color:#fff;"></i>
+                                                    <!-- Book icon below -->
+                                                    <i class="fa-sharp fa-solid fa-plus" style="color:#fff;"></i>
+                                                    <!-- Plus icon on top -->
+                                                </span>
+                                                <span class="btn-inner--text" style="color:#fff">Add Office</span>
+                                            </button>
+                                        </div>
                                     </div>
-                                </div>
                                 @endif
                             </div>
 
@@ -81,6 +82,21 @@
                                             <option value="30" selected>30</option>
                                             <option value="40">40</option>
                                             <option value="50">50</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row align-items-center perpage ms-auto">
+                                    <div class="col-auto">
+                                        <label for="itemsPerPage" class="fw-semibold mb-0">Select Building:</label>
+                                    </div>
+                                    <div class="col-auto">
+                                        <select id="select_building" name="select_building" onchange="filterTable()"
+                                            class="form-select form-select-md" style="padding-right:50px;">
+                                            <option value="" class="text-left">All</option>
+                                            @foreach ($buildings as $building)
+                                                <option value="{{ $building->id }}">{{ $building->building_name }}
+                                                </option>
+                                            @endforeach
                                         </select>
                                     </div>
                                 </div>

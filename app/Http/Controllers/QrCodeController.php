@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Building;
 use App\Models\Vehicle;
 use App\Models\Office;
 use Illuminate\Http\Request;
@@ -12,6 +13,7 @@ use SimpleSoftwareIO\QrCode\Facades\QrCode as FacadesQrCode;
 use Barryvdh\DomPDF\Facade\pdf as PDF;
 use Dompdf\Dompdf;
 use Dompdf\Options;
+use Illuminate\Support\Facades\Auth;
 use Mpdf\Mpdf;
 use TCPDF;
 use TCPDF_FONTS;
@@ -20,15 +22,39 @@ class QrCodeController extends Controller
 {
     public function index(Request $request)
     {
+        if (Auth::user()->isAdmin) {
+            $offices = Office::latest()->get();
+        } else {
+            $offices = Office::where('building_id', Auth::user()->building_id)->latest()->get();
+        }
 
-        $offices = Office::latest()->get();
         $office = Office::find($request->id);
-        $vehicleCount = Vehicle::latest()->when($office, function ($query) use ($office) {
-            $query->where('office_id', $office->id);
-        })->count();
-        $qrs = Vehicle::when($office, function ($query) use ($office) {
-            $query->where('office_id', $office->id);
-        })->with('qrCode')->latest();
+        if (!Auth::user()->isAdmin && $office && Auth::user()->building_id != $office->building_id) {
+            // office not found 
+            return redirect()->route('qrcode.index')->with('noVehicle', "office not found.");
+        }
+        $building = Building::find($request->buildingid);
+        $buildings = null;
+        $qrs = null;
+        $vehicleCount = 0;
+
+        if (Auth::user()->isAdmin) {
+            $buildings = Building::latest()->get();
+        } else {
+            $building = Building::find(Auth::user()->building_id);
+        }
+        if ($office || !Auth::user()->isAdmin) {
+            $vehicleCount = $building->vehicles()->when($office, function ($query) use ($office) {
+                $query->where('office_id', $office->id);
+            })->count();
+            $qrs = $building->vehicles()->when($office, function ($query) use ($office) {
+                $query->where('office_id', $office->id);
+            })->with('qrCode')->latest();
+        } elseif ($building) {
+            $vehicleCount = $building->vehicles()->count();
+            $qrs = $building->vehicles()->with('qrCode')->latest();
+        }
+
         $id = $request->id;
 
         // $qrs = $office->qrs()->latest();
@@ -39,21 +65,27 @@ class QrCodeController extends Controller
             $filter = $request->filter;
             $search = $request->search;
             // Apply search filters
-            if (!empty($search)) {
+            if (!empty($search) && $qrs) {
                 $qrs = $qrs->where('vehicle_number', 'like', '%' . $search . '%');
             }
-            if ($filter === 'hasQr') {
+            if ($filter === 'hasQr' && $qrs) {
                 $qrs = $qrs->whereHas('qrCode')->when($office, function ($query) use ($office) {
                     $query->where('office_id', $office->id);
                 });
-            } elseif ($filter === 'noQr') {
+            } elseif ($filter === 'noQr' && $qrs) {
                 $qrs = $qrs->doesntHave('qrCode')->when($office, function ($query) use ($office) {
                     $query->where('office_id', $office->id);
                 });
             }
             // Paginate results
-            $qrs = $qrs->paginate($itemsPerPage);
-            $count = $qrs->total();
+            if ($qrs) {
+                $qrs = $qrs->paginate($itemsPerPage);
+            }
+            if ($qrs) {
+                $count = $qrs->total();
+            } else {
+                $count = 0;
+            }
 
             // Return only the table HTML, not the entire layout
             $html = view("qr-codes.partials.qr_table", compact('qrs'))->render();
@@ -62,35 +94,49 @@ class QrCodeController extends Controller
             return response()->json(['success' => true, 'html' => $html, 'count' => $count]);
         }
         // Server-rendered page with default pagination (30 items per page)
-        $qrs = $qrs->paginate(30);
-        return view('qr-codes.qr_code', compact("offices", "qrs", "vehicleCount",));
+        if ($qrs) {
+            $qrs = $qrs->paginate(30);
+        }
+
+
+        return view('qr-codes.qr_code', compact("offices", "qrs", "vehicleCount", "buildings"));
 
         // No office selected, return the page with the office selection dropdown
-        return view('qr-codes.qr_code', compact("offices", "qrs", "vehicleCount"));
+        // return view('qr-codes.qr_code', compact("offices", "qrs", "vehicleCount", "buildings"));
     }
 
     public function generateQrCode(Request $request)
     {
+        if (!Auth::user()->isAdmin && !Auth::user()->can('qr.generate')) {
+            return back()->withInput()->with('noVehicle', "You do not have permission to generate QR codes.");
+        }
         $deselectedVehicles = json_decode($request->de_selected_vehicles, true);
         $selectedVehicles = json_decode($request->selected_vehicles, true);
         $selectedAll = $request->selected_all;
         $office = Office::find($request->officeId);
+        $building = Building::find($request->building_id);
+        if (!$building) {
+            $building = Building::find(Auth::user()->building_id);
+        }
+        if (!$building) {
+            return back()->withInput()->with('noVehicle', "No building or office found to generate QR.");
+        }
+
         if ($office) {
             $vehiclesWithQRCodeIds = QrCode::where('office_id', $office->id)
                 ->pluck('vehicle_id')->toArray(); // Get all book IDs associated with QR codes for that office
         } else {
-            $vehiclesWithQRCodeIds = QrCode::get()
-                ->pluck('vehicle_id')->toArray(); // Get all book IDs associated with QR codes for that office
+            $vehiclesWithQRCodeIds = $building->qrCodes()->pluck('vehicle_id')->toArray();
         }
         // Get all vehicles that do not have a QR code associated with that office
         if ($selectedAll === "true") {
             $excludedBookIds = array_merge($deselectedVehicles, $vehiclesWithQRCodeIds);
-            $vehicles = Vehicle::whereNotIn('id', $excludedBookIds)
+            $vehicles = $building->vehicles()->whereNotIn('vehicles.id', $excludedBookIds)
                 ->when($office, function ($query) use ($office) {
                     $query->where('office_id', $office->id);
                 })->get();
         } else {
-            $vehicles = Vehicle::whereIn('id', $selectedVehicles)
+            $vehicles = $building->vehicles()->whereIn('vehicles.id', $selectedVehicles)
                 ->when($office, function ($query) use ($office) {
                     $query->where('office_id', $office->id);
                 })
@@ -132,22 +178,38 @@ class QrCodeController extends Controller
     }
     public function downloadQrCode(Request $request, $qrId = null)
     {
+        $building = Building::find($request->buildingid);
         if ($qrId) {
             $qrCode = QrCode::find($qrId);
+            if (!$qrCode || (Auth::user()->building_id != $qrCode->vehicle->office->building_id && !Auth::user()->isAdmin)) {
+                return redirect()->route('qrcode.index')->withInput()->with('noVehicle', "No vehicle  found to download QR.");
+            }
+            $building = Building::find($qrCode->vehicle->office->building_id);
+        }
+        if (!$building) {
+            $building = Building::find(Auth::user()->building_id);
+        }
+        if (!$building) {
+            return back()->withInput()->with('noVehicle', "No building or office  found to download QR.");
+        }
+
+        if ($qrId) {
+            $qrCode = QrCode::find($qrId);
+
             $officeId = $qrCode->office_id;
         }
         $office = Office::find($request->officeId);
         if ($qrId) {
             $qrCodes = QrCode::where('id', $qrId)->with("vehicle")->get();
         } else {
-          
-                $qrCodes = QrCode::when($office,function($query) use($office){
-                    $query->where('office_id',$office->id);
-                })->with('vehicle')->get();
+
+            $qrCodes = $building->qrCodes()->when($office, function ($query) use ($office) {
+                $query->where('office_id', $office->id);
+            })->with('vehicle')->get();
         }
         if ($qrCodes->isEmpty()) {
             return back()->withInput()->with('noBrandedBook', "No vehicles found to download QR.");
         }
-        return view('qr-codes.qr_download_qr', compact("qrCodes"));
+        return view('qr-codes.qr_download_qr', compact("qrCodes", "building"));
     }
 }

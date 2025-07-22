@@ -7,8 +7,8 @@
                     aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form action="{{ route('offices.save') }}" method="post" enctype="multipart/form-data"
-                    id="addUserForm" class="row">
+                <form action="{{ route('offices.save') }}" method="post" enctype="multipart/form-data" id="addUserForm"
+                    class="row">
                     @csrf
                     <div class="mb-3 col-6">
                         <label for="dealerName" class="form-label">Office Name</label>
@@ -119,7 +119,7 @@
                 },
                 error: function(xhr, status, error) {
                     let errors = xhr.responseJSON.errors; // Renamed to avoid conflict
-                    let PermissionMessage = xhr.responseJSON.permissionMessage;
+                    let PermissionMessage = xhr.responseJSON.message;
                     $("#addUserBtn").attr('disabled', false);
                     $('#addUserBtn').find('i').removeClass('fa-spin').hide();
                     $('#addUserBtn').find('span').text('Submit');
@@ -130,13 +130,14 @@
                             $(label).html(message).addClass('d-none');
                         }, 5000);
                     });
-                    if (PermissionMessage) {
+                    if (PermissionMessage && xhr.status == 403) {
                         $("#errorMsgCustom").text(PermissionMessage).show();
                         $("#addModal").modal("hide");
+                        setTimeout(() => {
+                            $("#errorMsgCustom").html('').hide();
+                        }, 3000);
                     }
-                    setTimeout(() => {
-                        $("#errorMsgCustom").html('').hide();
-                    }, 3000);
+
                 }
             });
         }); // Closing brace for the submit function

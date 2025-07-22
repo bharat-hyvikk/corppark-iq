@@ -20,19 +20,29 @@ class  OfficeController extends Controller
 
     public function index(Request $request)
     {
+        if (Auth::user()->isAdmin) {
+            $buildings = Building::latest()->get();
+        } else {
+            $buildings = collect();
+        }
         if (Auth::user()->user_type == "1") {
-            $offices = Office::latest()->withCount('vehicles');
+            $offices = Office::latest()->when($request->building_id, function ($query) use ($request) {
+                return $query->where('building_id', $request->building_id);
+            })->withCount('vehicles');
         } else {
             $offices = Office::latest()->withCount('vehicles')->where('building_id', Auth::user()->building_id);
         }
 
 
-        $buildings = Building::latest()->get();
+
         if ($request->ajax()) {
             $search = $request->search;
             $itemsPerPage = $request->input('itemsPerPage') ?? 100000;
             $curentPage = $request->input('page', 1);
-            $offices = $offices->where('office_name', 'like', "%$search%")->orWhere('owner_name', 'like', "%$search%");
+            $offices = $offices = $offices->where(function ($query) use ($search) {
+                $query->where('office_name', 'like', "%$search%")
+                    ->orWhere('owner_name', 'like', "%$search%");
+            });
             Paginator::currentPageResolver(function () use ($curentPage) {
                 return $curentPage;
             });
@@ -66,10 +76,22 @@ class  OfficeController extends Controller
             [
                 'name' => 'required|string|max:255',
                 'owner_name' => 'required|string|max:255',
-                'office_number' => 'required|string|max:255',
                 'email' => 'required|email|unique:offices,owner_email',
                 'phone' => 'required|numeric|digits:10|unique:offices,owner_phone_number',
                 'vehicle_limit' => 'required|integer|min:1',
+                'building' => 'required|exists:building,id',
+                'office_number' => [
+                    'required',
+                    'string',
+                    'max:255',
+                    function ($attribute, $value, $fail) use ($request) {
+                        $building = Building::find($request->building);
+                        if (Office::where('office_number', $value)->where('building_id', $building->id)->exists()) {
+                            $fail('The office number is already in use.');
+                        }
+                    }
+                ],
+
             ],
             [
                 'phone.unique' => 'The phone number is already in use.',
@@ -82,6 +104,8 @@ class  OfficeController extends Controller
                 'office_number.required' => 'The office number field is required.',
                 'email.required' => 'The owner email field is required.',
                 'phone.required' => 'The owner phone number field is required.',
+                'building.required' => 'The building field is required.',
+                'building.exists' => 'The building does not exist.',
 
             ]
         );
@@ -105,11 +129,16 @@ class  OfficeController extends Controller
         $itemsPerPage = $request->input('itemsPerPage') ?? 100000;
         $curentPage = $request->input('currentPage', 1);
         if (Auth::user()->user_type == "1") {
-            $offices = Office::latest()->withCount('vehicles');
+            $offices =   Office::latest()->when($request->building_id, function ($query) use ($request) {
+                return $query->where('building_id', $request->building_id);
+            })->withCount('vehicles');
         } else {
             $offices = Office::latest()->withCount('vehicles')->where('building_id', Auth::user()->building_id);
         }
-        $offices = $offices->where('office_name', 'like', "%$search%")->orWhere('owner_name', 'like', "%$search%");
+        $offices = $offices = $offices->where(function ($query) use ($search) {
+            $query->where('office_name', 'like', "%$search%")
+                ->orWhere('owner_name', 'like', "%$search%");
+        });
         $lastPage = ceil($offices->count() / $itemsPerPage);
         if ($curentPage > $lastPage) {
             $curentPage = $lastPage;
@@ -164,7 +193,18 @@ class  OfficeController extends Controller
             [
                 'name' => 'required|string|max:255',
                 'owner_name' => 'required|string|max:255',
-                'office_number' => 'required|string|max:255',
+                'building' => 'required|exists:building,id',
+                'office_number' => [
+                    'required',
+                    'string',
+                    'max:255',
+                    function ($attribute, $value, $fail) use ($request) {
+                        $building = Building::find($request->building);
+                        if (Office::where('office_number', $value)->where('building_id', $building->id)->where('id', '!=', $request->id)->exists()) {
+                            $fail('The office number is already in use.');
+                        }
+                    }
+                ],
                 'email' => 'required|email|unique:offices,owner_email,' . $request->id,
                 'phone' => 'required|numeric|digits:10|unique:offices,owner_phone_number,' . $request->id,
                 'vehicle_limit' => 'required|integer|min:1',
@@ -181,6 +221,8 @@ limit.min' => 'The vehicle limit must be at least 1.',
                 'office_number.required' => 'The office number field is required.',
                 'email.required' => 'The owner email field is required.',
                 'phone.required' => 'The owner phone number field is required.',
+                'building.required' => 'The building field is required.',
+                'building.exists' => 'The building does not exist.',
 
             ]
         );
@@ -197,17 +239,25 @@ limit.min' => 'The vehicle limit must be at least 1.',
         } else {
             $office->building_id = Auth::user()->building_id;
         }
+        if (!Auth::user()->isAdmin && Auth::user()->building_id != $office->building_id) {
+            return response()->json(['error' => 'You do not have permission to update this office.'], 403);
+        }
         $office->save();
         $search = $request->search;
         $itemsPerPage = $request->input('itemsPerPage') ?? 100000;
         $curentPage = $request->input('currentPage', 1);
         if (Auth::user()->user_type == "1") {
-            $offices = Office::latest()->withCount('vehicles');
+            $offices =   Office::latest()->when($request->building_id, function ($query) use ($request) {
+                return $query->where('building_id', $request->building_id);
+            })->withCount('vehicles');
         } else {
             $offices = Office::latest()->withCount('vehicles')->where('building_id', Auth::user()->building_id);
         }
         if ($request->search) {
-            $offices->where('office_name', 'like', "%$search%")->orWhere('owner_name', 'like', "%$search%");
+            $offices = $offices->where(function ($query) use ($search) {
+                $query->where('office_name', 'like', "%$search%")
+                    ->orWhere('owner_name', 'like', "%$search%");
+            });
         }
         Paginator::currentPageResolver(function () use ($curentPage) {
             return $curentPage;
@@ -236,6 +286,9 @@ limit.min' => 'The vehicle limit must be at least 1.',
             return response()->json(['error' => 'Office not found'], 404);
         }
         $vehicles = $office->vehicles;
+        if (!Auth::user()->isAdmin && Auth::user()->building_id != $office->building_id) {
+            return response()->json(['error' => 'You do not have permission to delete this office.'], 403);
+        }
         if ($vehicles->count() > 0) {
             return response()->json(['error' => 'Cannot delete office with vehicles.'], 400);
         }
@@ -243,9 +296,18 @@ limit.min' => 'The vehicle limit must be at least 1.',
         $search = $request->search;
         $itemsPerPage = $request->input('itemsPerPage') ?? 100000;
         $curentPage = $request->input('page', 1);
-        $offices = Office::latest()->latest();
+        if (Auth::user()->user_type == "1") {
+            $offices =   Office::latest()->when($request->building_id, function ($query) use ($request) {
+                return $query->where('building_id', $request->building_id);
+            })->withCount('vehicles');
+        } else {
+            $offices = Office::latest()->withCount('vehicles')->where('building_id', Auth::user()->building_id);
+        }
         if ($request->search) {
-            $offices->where('office_name', 'like', "%$search%")->orWhere('owner_name', 'like', "%$search%");
+            $offices = $offices->where(function ($query) use ($search) {
+                $query->where('office_name', 'like', "%$search%")
+                    ->orWhere('owner_name', 'like', "%$search%");
+            });
         }
         $lastPage = ceil($offices->count() / $itemsPerPage);
         if ($curentPage > $lastPage) {

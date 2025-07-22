@@ -286,24 +286,27 @@ class  UserController extends Controller
         } else {
             $user->building_id = $request->building;
         }
-        $user->save();
         $user->permissions()->detach();
         // deattach role
         $user->roles()->detach();
+
         if ($user->user_type == '2') {
             $user->assignRole('manager');
         } elseif ($user->user_type == '3') {
             $user->assignRole('submanager');
-        }
-
-        $permissions = $request->permissions ?? [];
-        $allPermissions = Permission::pluck('name')->toArray();
-        foreach ($permissions as $permission) {
-            // check permission before assigning if it exists or not 
-            if (in_array($permission, $allPermissions)) {
-                $user->givePermissionTo($permission);
+            $permissions = $request->permissions ?? [];
+            $allPermissions = Permission::pluck('name')->toArray();
+            foreach ($permissions as $permission) {
+                // check permission before assigning if it exists or not 
+                if (in_array($permission, $allPermissions)) {
+                    $user->givePermissionTo($permission);
+                }
             }
         }
+        $user->save();
+
+
+
         $search = $request->search;
         $itemsPerPage = $request->input('itemsPerPage') ?? 100000;
         $curentPage = $request->input('currentPage', 1);

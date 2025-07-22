@@ -47,7 +47,11 @@ class LoginController extends Controller
                 Auth::logout();
                 return redirect()->back()->withErrors(['message' => 'You can not use this portal.']);
             } else {
-                // Continue login (valid user)
+                // Continue login (valid user)7
+                if (Auth::user()->status == "Inactive" && !Auth::user()->isAdmin) {
+                    Auth::logout();
+                    return redirect()->back()->withErrors(['message' => 'Your account is inactive.']);
+                }
                 return redirect()->intended('dashboard');
             }
         }

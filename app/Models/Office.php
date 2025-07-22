@@ -17,20 +17,20 @@ class Office extends Model
         static::creating(function ($office) {
             $user = Auth::user();
             if (!$office->canModify($user, 'office.add')) {
-                return response()->json(['permissionMessage' => 'You do not have permission to create  office.'], 403);
+                abort(403, 'You do not have permission to create  office.');
             }
         });
         static::updating(function ($office) {
             $user = Auth::user();
             if (!$office->canModify($user, 'office.update')) {
-                return response()->json(['permissionMessage' => 'You do not have permission to update  office.'], 403);
+                abort(403, 'You do not have permission to update  office.');
             }
         });
 
         static::deleting(function ($office) {
             $user = Auth::user();
             if (!$office->canModify($user, 'office.delete')) {
-                return response()->json(['message' => 'You do not have permission to delete  office.'], 403);
+                abort(403, 'You do not have permission to delete  office.');
             }
         });
     }

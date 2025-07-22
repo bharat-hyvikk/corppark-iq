@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Building;
 use App\Models\InvoiceMgmt;
 use App\Models\Office;
 use App\Models\QrCode;
 use App\Models\Vehicle;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Support\Facades\DB;
 
@@ -19,8 +21,33 @@ class  VehicleController extends Controller
      */
     public function index(Request $request)
     {
-        $vehicles = Vehicle::latest();
-        $offices = Office::latest()->get();
+        if (Auth::user()->isAdmin) {
+            if ($request->building_id) {
+                $building = Building::find($request->building_id);
+                if (!$building) {
+                    return response()->json(['error' => 'Building not found'], 404);
+                }
+                $vehicles = $building->vehicles()->latest();
+            } else {
+                $vehicles = Vehicle::latest();
+            }
+        } else {
+            $vehicles = Auth::user()->building->vehicles()->latest();
+        }
+
+
+
+        if (Auth::user()->isAdmin) {
+            $offices = Office::latest()->get();
+        } else {
+            $offices = Auth::user()->building->offices()->latest()->get();
+        }
+
+        if (Auth::user()->isAdmin) {
+            $buildings = Building::latest()->get();
+        } else {
+            $buildings = collect();
+        }
         $completedOffices = DB::table('offices')
             ->join('vehicles', 'offices.id', '=', 'vehicles.office_id')
             ->leftJoin('qr_codes', 'vehicles.id', '=', 'qr_codes.vehicle_id')
@@ -64,7 +91,7 @@ class  VehicleController extends Controller
             ]);
         }
         $vehicles = $vehicles->paginate(30);
-        return view('vehicles.vehicle-management', compact('vehicles', 'offices'));
+        return view('vehicles.vehicle-management', compact('vehicles', 'offices', 'buildings'));
     }
     /**
      * Show the form for creating a new resource.
@@ -80,7 +107,13 @@ class  VehicleController extends Controller
         // Validate the request data
         // : Vehicles can be registered only if the office limit is not exceeded.
         $office = Office::find($request->office_id);
-       
+        if (!$office) {
+            return response()->json(['error' => 'office not found'], 404);
+        }
+        if (!Auth::user()->isAdmin && Auth::user()->building_id != $office->building_id) {
+            return response()->json(['error' => 'You do not have permission to register a vehicle in this office.'], 403);
+        }
+
 
         $request->validate(
             [
@@ -96,9 +129,7 @@ class  VehicleController extends Controller
                 ],
                 'phone' => 'required|numeric|digits:10'
             ],
-            [
-                
-            ]
+            []
         );
         // Create a new vehicle
 
@@ -177,6 +208,14 @@ class  VehicleController extends Controller
             return response()->json(['error' => 'Vehicle not found'], 404);
         }
         $office = Office::find($request->office_id);
+        if (!$office) {
+            return response()->json(['error' => 'Office not found'], 404);
+        }
+        // Check if the user has permission to update the vehicle in this office
+        if (!Auth::user()->isAdmin && Auth::user()->building_id != $office->building_id) {
+            return response()->json(['error' => 'You do not have permission to update a vehicle in this office.'], 403);
+        }
+
         $request->validate(
             [
                 'vehicle_number' => 'required|string|max:255|unique:vehicles,vehicle_number,' . $request->id,
@@ -210,7 +249,20 @@ class  VehicleController extends Controller
         $itemsPerPage = $request->input('itemsPerPage') ?? 100000;
         $curentPage = $request->input('currentPage', 1);
         $status = $request->status;
-        $vehicles = Vehicle::latest();
+        if (Auth::user()->isAdmin) {
+            if ($request->building_id) {
+                $building = Building::find($request->building_id);
+                if (!$building) {
+                    return response()->json(['error' => 'Building not found'], 404);
+                }
+                $vehicles = $building->vehicles()->latest();
+            } else {
+                $vehicles = Vehicle::latest();
+            }
+        } else {
+            $vehicles = Auth::user()->building->vehicles()->latest();
+        }
+
         $selectedOffice = $request->select_office;
         if ($selectedOffice) {
             $vehicles = $vehicles->where('office_id', $selectedOffice);
@@ -247,11 +299,29 @@ class  VehicleController extends Controller
         if (!$vehicle) {
             return response()->json(['error' => 'Vehicle not found'], 404);
         }
+        if (!Auth::user()->isAdmin && Auth::user()->building_id != $office->building_id) {
+            return response()->json(['error' => 'You do not have permission to delete a vehicle in this office.'], 403);
+        }
+        $vehicle->qrCode->delete();
         $vehicle->delete();
+
         $search = $request->search;
         $itemsPerPage = $request->input('itemsPerPage') ?? 100000;
         $curentPage = $request->input('page', 1);
-        $vehicles = Vehicle::latest();
+        if (Auth::user()->isAdmin) {
+            if ($request->building_id) {
+                $building = Building::find($request->building_id);
+                if (!$building) {
+                    return response()->json(['error' => 'Building not found'], 404);
+                }
+                $vehicles = $building->vehicles()->latest();
+            } else {
+                $vehicles = Vehicle::latest();
+            }
+        } else {
+            $vehicles = Auth::user()->building->vehicles()->latest();
+        }
+
         $selectedOffice = $request->select_office;
         if ($selectedOffice) {
             $vehicles = $vehicles->where('office_id', $selectedOffice);

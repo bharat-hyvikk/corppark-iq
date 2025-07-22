@@ -8,26 +8,43 @@
             </div>
             <div class="modal-body">
                 <form action="{{ route('buildings.update') }}" method="post" enctype="multipart/form-data"
-                    id="updateForm">
+                    id="updateForm" class="row">
                     @csrf
-                   <div class="mb-3">
+                    <div class="mb-3 col-6">
                         <label class="form-label">Building Name</label>
                         <input type="text" class="form-control" name='building_name'
                             aria-describedby="dealerNameHelp" class="form-control" autocomplete="">
                         <label class="bg-danger text-white  form-label w-100 mt-2 p-2 d-none"
                             id="edit_building_name"></label>
                     </div>
-                    <div class="mb-3">
+                    <div class="mb-3 col-6">
+                        <label for="owner_name" class="form-label">Owner Name</label>
+                        <input type="text" class="form-control" name='owner_name' aria-describedby="dealerNameHelp"
+                            class="form-control" autocomplete="">
+                        <label class="bg-danger text-white  form-label w-100 mt-2 p-2 d-none"
+                            id="edit_owner_name"></label>
+                    </div>
+                    <div class="mb-3 col-6">
+                        <label for="dealeremail" class="form-label">Owner Email</label>
+                        <input type="email" name="email" id="dealeremail" class="form-control">
+                        <label class="bg-danger text-white  form-label w-100 mt-2 p-2 d-none" id="edit_email"></label>
+                    </div>
+                    <div class="mb-3 col-6">
+                        <label for="dealer_phone_number" class="form-label">Owner Phone Number</label>
+                        <input type="text" name="phone" id="dealer_phone_number" class="form-control">
+                        <label class="bg-danger text-white  form-label w-100 mt-2 p-2 d-none" id="edit_phone"></label>
+                    </div>
+                    <div class="mb-3 col-6">
                         <label class="form-label">Building Address</label>
                         <textarea class="form-control" name='building_address' aria-describedby="dealerNameHelp" class="form-control"
                             autocomplete="off"></textarea>
                         <label class="bg-danger text-white  form-label w-100 mt-2 p-2 d-none"
                             id="edit_building_address"></label>
                     </div>
-                    <div class="mb-3">
+                    <div class="mb-3 col-6">
                         <label class="form-label">Building Image</label>
-                        <input type="file" class="form-control" name='building_image' aria-describedby="dealerNameHelp"
-                            class="form-control">
+                        <input type="file" class="form-control" name='building_image'
+                            aria-describedby="dealerNameHelp" class="form-control">
                         <label class="bg-danger text-white  form-label w-100 mt-2 p-2 d-none"
                             id="edit_building_image"></label>
                     </div>
@@ -45,11 +62,11 @@
 </div>
 </div>
 <script>
-    let dealerId;
+    let building_id;
     $(document).ready(function() {
         $(document).on("click", "#editBuildingBtn", function() {
 
-            dealerId = $(this).data('id');
+            building_id = $(this).data('id');
             $.ajax({
                 method: "post",
                 url: "{{ route('buildings.edit') }}",
@@ -62,6 +79,9 @@
                 success: function(response) {
                     $("[name='building_name']").val(response.building.building_name);
                     $("[name='building_address']").val(response.building.building_address);
+                    $("[name='owner_name']").val(response.building.owner_name);
+                    $("[name='phone']").val(response.building.owner_phone_no);
+                    $("[name='email']").val(response.building.owner_email);
                     $("#editModal").modal("show");
 
                 },
@@ -80,19 +100,21 @@
         $("#updateVehicleBtn").attr('disabled', true);
         var currentPage = $('ul.pagination li.active span.page-link').text();
         let url = $(this).attr("action");
-        let data = $(this).serializeArray();
+        let form = $('#updateForm')[0];
+        let data = new FormData(form); // Create a FormData object from the form
         let itemsPerPage = $('#itemsPerPage').val(); // Get selected items per page
         let query = $('#search').val();
         // let filter = $('input[name="status_rdo"]:checked').val();
-        console.log(dealerId);
-        data.push({
-            name: "id",
-            value: dealerId
-        })
+        // data.append('_token', $('meta[name="csrf-token"]').attr('content'));
+        // push csrf token 
+        data.append('building_id', building_id);
         $.ajax({
             type: "post",
             url: url,
             data: data,
+            contentType: false,
+            processData: false,
+
             success: function(response) {
                 $("#updateVehicleBtn").attr('disabled', false);
                 $("#pageHeaderText").text(response.total);

@@ -8,23 +8,40 @@
             </div>
             <div class="modal-body">
                 <form action="{{ route('buildings.save') }}" method="post" enctype="multipart/form-data"
-                    id="addBuildingForm">
+                    id="addBuildingForm" class="row">
                     @csrf
-                    <div class="mb-3">
+                    <div class="mb-3 col-6">
                         <label class="form-label">Building Name</label>
                         <input type="text" class="form-control" name='building_name'
                             aria-describedby="dealerNameHelp" class="form-control" autocomplete="">
                         <label class="bg-danger text-white  form-label w-100 mt-2 p-2 d-none"
                             id="add_building_name"></label>
                     </div>
-                    <div class="mb-3">
+                      <div class="mb-3 col-6">
+                        <label for="owner_name" class="form-label">Owner Name</label>
+                        <input type="text" class="form-control" name='owner_name' aria-describedby="dealerNameHelp"
+                            class="form-control" autocomplete="">
+                        <label class="bg-danger text-white  form-label w-100 mt-2 p-2 d-none"
+                            id="add_owner_name"></label>
+                    </div>
+                     <div class="mb-3 col-6">
+                        <label for="dealeremail" class="form-label">Owner Email</label>
+                        <input type="email" name="email" id="dealeremail" class="form-control">
+                        <label class="bg-danger text-white  form-label w-100 mt-2 p-2 d-none" id="add_email"></label>
+                    </div>
+                    <div class="mb-3 col-6">
+                        <label for="dealer_phone_number" class="form-label">Owner Phone Number</label>
+                        <input type="text" name="phone" id="dealer_phone_number" class="form-control">
+                        <label class="bg-danger text-white  form-label w-100 mt-2 p-2 d-none" id="add_phone"></label>
+                    </div>
+                    <div class="mb-3 col-6">
                         <label class="form-label">Building Address</label>
                         <textarea class="form-control" name='building_address' aria-describedby="dealerNameHelp" class="form-control"
                             autocomplete=""></textarea>
                         <label class="bg-danger text-white  form-label w-100 mt-2 p-2 d-none"
                             id="add_building_address"></label>
                     </div>
-                    <div class="mb-3">
+                    <div class="mb-3 col-6">
                         <label class="form-label">Building Images</label>
                         <input type="file" class="form-control" name='building_images'
                             aria-describedby="dealerNameHelp" class="form-control" autocomplete="">

@@ -86,7 +86,7 @@
                 <div class="qr-box relative rounded-3xl overflow-hidden">
                     <img src="./assets/bg.png" class="absolute top-0 left-0 w-full h-full"></img>
                     <!-- Company Name -->
-                    <h1 class="text-[#E20000] text-[32px] DarkerBold z-10">Swara Parklane</h1>
+                    <h1 class="text-[#E20000] text-[32px] DarkerBold z-10">{{ $building->building_name }}</h1>
                     <!-- Qr code -->
                     <div class="flex justify-center w-full gap-1 relative">
                         <div class="relative p-1 w-32">
@@ -133,8 +133,7 @@
                     <!-- Address -->
                     <div class="flex flex-col z-10 text-white justify-center items-center text-center">
                         <h1 class="DarkerBold text-sm">Address:</h1>
-                        <p class="DarkerMedium text-xs leading-tight">Swara Parklane, Atabhai Rd,Bhavnagar, Gujarat
-                            364001
+                        <p class="DarkerMedium text-xs leading-tight">{{ $building->building_address }}
                         </p>
                     </div>
                 </div>

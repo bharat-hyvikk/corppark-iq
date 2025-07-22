@@ -5,6 +5,18 @@
                 Building Name
             </th>
             <th class="text-secondary text-xs font-weight-semibold opacity-7">
+                Total Offices
+            </th>
+            <th class="text-secondary text-xs font-weight-semibold opacity-7">
+                Owner Name
+            </th>
+            <th class="text-secondary text-xs font-weight-semibold opacity-7">
+                Owner Phone No
+            </th>
+            <th class="text-secondary text-xs font-weight-semibold opacity-7">
+                Owner Email
+            </th>
+            <th class="text-secondary text-xs font-weight-semibold opacity-7">
                 Building Address </th>
             <th class="text-secondary text-xs font-weight-semibold opacity-7">
                 Images
@@ -27,6 +39,29 @@
                         </div>
                     </div>
                 </td>
+                <td class="align-middle  text-sm ps-5">
+                    @if ($item->offices_count == 0)
+                        <span
+                            class="badge badge-sm border border-danger text-danger bg-danger">{{ $item->offices_count ?? '0' }}</span>
+                    @else
+                        <span
+                            class="badge badge-sm border border-success text-success bg-success">{{ $item->offices_count }}</span>
+                    @endif
+                </td>
+                <td class="align-middle text-start text-sm">
+                    <p class="text-sm text-dark font-weight-semibold mb-0 email ps-3">
+                        {{ $item->owner_name }}
+                    </p>
+                </td>
+                <td class="align-middle text-start text-sm">
+                    <p class="text-sm text-dark font-weight-semibold mb-0 email ps-3">
+                        {{ $item->owner_phone_no }}
+                    </p>
+                </td>
+                <td class="align-middle text-start text-sm">
+                    <p class="text-sm text-dark font-weight-semibold mb-0 email ps-3">
+                        {{ $item->owner_email }}
+                    </p>
 
                 <td class="align-middle text-start text-sm">
                     <p class="text-sm text-dark font-weight-semibold mb-0 email ps-3">
@@ -35,7 +70,7 @@
                 </td>
                 <td class="text-sm cursor-pointer media-icon ps-4" data-bs-toggle="tooltip"
                     data-bs-title="View Buliding image" data-building_name="{{ $item->building_name }}"
-                    data-media-src="{{ url('storage/images/buildings/' .$item->building_image) }}">
+                    data-media-src="{{ url('storage/images/buildings/' . $item->building_image) }}">
 
                     <span class="badge badge-sm border border-success text-success" data-bs-toggle="tooltip"
                         data-id="{{ $item->id }}">

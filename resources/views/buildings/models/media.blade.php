@@ -6,7 +6,8 @@
                     <span>Building Name:</span>
                     <span id="building_name" class="text-capitalize"></span>
                 </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close bg-secondary" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
             </div>
             <div class="modal-body m-0 p-0" id="mediaContainer">
                 <!-- Media content will be inserted here by JavaScript -->

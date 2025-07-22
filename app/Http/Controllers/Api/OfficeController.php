@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Building;
 use App\Models\Office;
 use App\Models\QrCode;
+use App\Models\User;
 use App\Models\Vehicle;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -35,12 +37,18 @@ class OfficeController extends Controller
         $unique_code = $request->input('unique_code');
         // Assuming you have a model named Office and a relationship with Vehicle
         $qrCode = QrCode::where('unique_code', $unique_code)->first();
-        if (!$qrCode) {
-            return response()->json(['error' => 'QR code not found'], 404);
+        $user = User::find($request->id);
+
+        if (!$qrCode || !$user->building->offices->pluck("id")->contains($qrCode->office_id)) {
+            return response()->json([
+                'message' => 'Invalid QR code',
+                'success' => '0',
+                'data' => null,
+            ], 404);
         }
         $officeId = $qrCode->office_id;
         $office = \App\Models\Office::find($officeId);
-        $space_occupied = Vehicle::where('check_in_status', 'Parked')->where("office_id",$office->id)->count();
+        $space_occupied = Vehicle::where('check_in_status', 'Parked')->where("office_id", $office->id)->count();
         $space_left = $office->vehicle_limit - $space_occupied;
         $office->space_occupied = $space_occupied;
         $office->space_left = $space_left;
@@ -77,17 +85,37 @@ class OfficeController extends Controller
         }
         $office_no = $request->input('office_no');
         // Assuming you have a model named Office and a relationship with Vehicle
-        $office = \App\Models\Office::where('office_number', $office_no)->first();
+        $user = User::find($request->id);
+        $building = Building::find($user->building_id);
+        if (!$building) {
+            return response()->json(
+                [
+                    "message" => "Building Not Found",
+                    "data" => null,
+                    "success" => 0,
+                ],
+                404
+            );
+        }
+
+        $office = $building->offices()->where('office_number', $office_no)->first();
         if (!$office) {
-            return response()->json(['error' => 'Office not found'], 404);
+            return response()->json(
+                [
+                    "message" => "Office Not Found",
+                    "data" => null,
+                    "success" => 0,
+                ],
+                404
+            );
         }
         $vehicles = $office->vehicles()->get();
-        $space_occupied = Vehicle::where('check_in_status', 'Parked')->where("office_id",$office->id)->count();
+        $space_occupied = Vehicle::where('check_in_status', 'Parked')->where("office_id", $office->id)->count();
         $space_left = $office->vehicle_limit - $space_occupied;
         $office->space_occupied = $space_occupied;
         $office->space_left = $space_left;
         $office = $office->toArray();
-        $office["vehicles"]=$vehicles->toArray();
+        $office["vehicles"] = $vehicles->toArray();
         // $data = array_merge($office, $vehicles->toArray());
         return response()->json(
             [
@@ -99,16 +127,9 @@ class OfficeController extends Controller
     }
     public function officeList(Request $request)
     {
-        // Your logic to get office list
-        // For example:
-        // api details
-        // -> request fields:- id, api_token, search, itemsPerPage, currentPage.
-        // -> response field:- office_no, office_name, office_owner_name, office_owner_email, office_owner_phone_no, vehicle_limit, space_occupied, space_left,
-        $search = $request->input('search', '');
-        $itemsPerPage = $request->input('itemsPerPage', 10);
-        $curentPage = $request->input('currentPage', 1);
-
-        $offices = Office::latest()->pluck("office_number")->toArray();
+        $user = User::find($request->id);
+        $building = Building::find($user->building_id);
+        $offices = $building->offices()->latest()->pluck("office_number")->toArray();
         return response()->json([
             'success' => 1,
             'data' => $offices,
