@@ -64,8 +64,8 @@
                     }, 3000);
                 },
                 error: function(xhr, status, error) {
-                    error = xhr.responseJSON.message;
-                     $('#deleteModal').modal('hide'); // Hide the modal
+                    error = xhr.responseJSON.error;
+                    $('#deleteModal').modal('hide'); // Hide the modal
                     $("#errorMsgCustom").text(error).show();
                     setTimeout(() => {
                         $("#errorMsgCustom").text('').hide();
