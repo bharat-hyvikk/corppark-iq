@@ -123,7 +123,7 @@
                                             </span>
                                             <span class="btn-inner--text">Download Bulk QR</span>
                                         </a>
-                                    @else
+                                    @elseif(Auth::user()->can("qr.download"))
                                         <a href="{{ route('qrcode.download', ['officeName' => request()->route('officeName'), 'officeId' => request()->query('id')]) }}"
                                             class="btn btn-sm btn-dark btn-icon me-2">
                                             <span class="btn-inner--icon">

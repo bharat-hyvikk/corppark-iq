@@ -85,21 +85,23 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="row align-items-center perpage ms-auto">
-                                    <div class="col-auto">
-                                        <label for="itemsPerPage" class="fw-semibold mb-0">Select Building:</label>
+                                @if (auth()->user()->isAdmin)
+                                    <div class="row align-items-center perpage ms-auto">
+                                        <div class="col-auto">
+                                            <label for="itemsPerPage" class="fw-semibold mb-0">Select Building:</label>
+                                        </div>
+                                        <div class="col-auto">
+                                            <select id="select_building" name="select_building" onchange="filterTable()"
+                                                class="form-select form-select-md" style="padding-right:50px;">
+                                                <option value="" class="text-left">All</option>
+                                                @foreach ($buildings as $building)
+                                                    <option value="{{ $building->id }}">{{ $building->building_name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
                                     </div>
-                                    <div class="col-auto">
-                                        <select id="select_building" name="select_building" onchange="filterTable()"
-                                            class="form-select form-select-md" style="padding-right:50px;">
-                                            <option value="" class="text-left">All</option>
-                                            @foreach ($buildings as $building)
-                                                <option value="{{ $building->id }}">{{ $building->building_name }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
+                                @endif
                                 <div class="input-group w-sm-25  grid grid-cols-1 ms-auto">
                                     <span class="input-group-text text-body">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16px"

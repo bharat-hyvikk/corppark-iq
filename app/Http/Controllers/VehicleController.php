@@ -21,6 +21,11 @@ class  VehicleController extends Controller
      */
     public function index(Request $request)
     {
+
+        if (!Auth::user()->isAdmin && !Auth::user()->can("vehicle.view")) {
+            Auth::logout();
+            return redirect()->route('sign-in')->withErrors(['message' => 'You do not have access.']);
+        }
         if (Auth::user()->isAdmin) {
             if ($request->building_id) {
                 $building = Building::find($request->building_id);
@@ -107,12 +112,7 @@ class  VehicleController extends Controller
         // Validate the request data
         // : Vehicles can be registered only if the office limit is not exceeded.
         $office = Office::find($request->office_id);
-        if (!$office) {
-            return response()->json(['error' => 'office not found'], 404);
-        }
-        if (!Auth::user()->isAdmin && Auth::user()->building_id != $office->building_id) {
-            return response()->json(['error' => 'You do not have permission to register a vehicle in this office.'], 403);
-        }
+
 
 
         $request->validate(
@@ -127,10 +127,26 @@ class  VehicleController extends Controller
                         }
                     }
                 ],
-                'phone' => 'required|numeric|digits:10'
+                'phone' => 'required|numeric|digits:10',
             ],
-            []
+            [
+                'phone.numeric' => 'The phone number must be a number.',
+                'phone.digits' => 'The phone number must be 10 digits long.',
+                'vehicle_number.required' => 'The vehicle number is required.',
+                'vehicle_number.unique' => 'The vehicle number is already in use.',
+                'office_id.exists' => 'The selected office is invalid.',
+                'office_id.required' => 'The office is required.',
+                'phone.required' => 'The phone number is required.',
+                'office_id.required' => 'The office is required.',
+                'office_id.exists' => 'The selected office does not exist.',
+            ]
         );
+        if (!$office) {
+            return response()->json(['error' => 'office not found'], 404);
+        }
+        if (!Auth::user()->isAdmin && Auth::user()->building_id != $office->building_id) {
+            return response()->json(['error' => 'You do not have permission to register a vehicle in this office.'], 403);
+        }
         // Create a new vehicle
 
         $vehicle = new Vehicle();
@@ -179,9 +195,11 @@ class  VehicleController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function getOfficeNames(Request $request)
     {
-        //
+        $building_id = $request->building_id;
+        $offices = Office::where('building_id', $building_id)->get();
+        return response()->json(['offices' => $offices]);
     }
 
     /**
@@ -194,6 +212,7 @@ class  VehicleController extends Controller
         if (!$vehicle) {
             return response()->json(['error' => 'Vehicle not found'], 404);
         }
+        $vehicle->building_id = $vehicle->office->building_id;
         return response()->json(['vehicle' => $vehicle]);
     }
 
@@ -244,6 +263,13 @@ class  VehicleController extends Controller
         $vehicle->vehicle_number = $request->vehicle_number;
         $vehicle->office_id = $request->office_id;
         $vehicle->owner_phone = $request->phone;
+        if ($vehicle->isDirty('office_id')) {
+            $qrCode = QrCode::where('vehicle_id', $vehicle->id)->first();
+            if ($qrCode) {
+                $qrCode->office_id = $request->office_id;
+                $qrCode->save();
+            }
+        }
         $vehicle->save();
         $search = $request->search;
         $itemsPerPage = $request->input('itemsPerPage') ?? 100000;

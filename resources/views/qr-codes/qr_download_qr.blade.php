@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>A4 Size Page</title>
-        <base href="{{ url('/') }}/">
+    <base href="{{ url('/') }}/">
 
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <style>
@@ -110,31 +110,36 @@
                             <div class="w-3 h-3 hidden rounded-full overflow-hidden mt-[6px]">
                                 <img src="./assets/dot.svg" class=" w-full h-full" alt="" srcset="">
                             </div>
-                            <p class="text-[#6CC8C6]  text-2xl font-extrabold">{{  $vehicle->vehicle->vehicle_number }}</p>
+                            <p class="text-[#6CC8C6]  text-2xl font-extrabold">{{ $vehicle->vehicle->vehicle_number }}
+                            </p>
                             <div class="w-3 h-3 rounded-full hidden overflow-hidden mt-[6px]">
                                 <img src="./assets/dot.svg" class=" w-full h-full" alt="" srcset="">
                             </div>
                         </div>
-                    <div class="flex items-center gap-3 z-10">
-                        <div class="w-3 h-3 rounded-full overflow-hidden mt-[6px]">
-                            <img src="./assets/dot.svg" class=" w-full h-full" alt="" srcset="">
+                        <div class="flex items-center gap-3 z-10">
+                            <div class="w-3 h-3 rounded-full overflow-hidden mt-[6px]">
+                                <img src="./assets/dot.svg" class=" w-full h-full" alt="" srcset="">
+                            </div>
+                            <p class="text-[#6CC8C6]  text-2xl font-semibold ">Office
+                                No:{{ $vehicle->office->office_number }}</p>
+                            <div class="w-3 h-3 rounded-full overflow-hidden mt-[6px]">
+                                <img src="./assets/dot.svg" class=" w-full h-full" alt="" srcset="">
+                            </div>
+
                         </div>
-                        <p class="text-[#6CC8C6]  text-2xl font-semibold ">Office No:{{  $vehicle->office->office_number }}</p>
-                        <div class="w-3 h-3 rounded-full overflow-hidden mt-[6px]">
-                            <img src="./assets/dot.svg" class=" w-full h-full" alt="" srcset="">
-                        </div>
-                        
-                    </div>
                     </div>
                     <!-- Building Name -->
-                    <div class="w-9/12 h-36 z-10 rounded-xl overflow-hidden">
-                        <img src="./assets/Sticker15.png" class="w-full h-full object-cover" alt="">
+                    <div class="w-9/12 h-36 z-10 rounded-xl overflow-hidden" style="height: 350px;">
+                        <img src="{{ url('storage/images/buildings/' . $building->building_image) }}"
+                            class="w-full h-full object-cover" alt="" >
                     </div>
                     <!-- Address -->
                     <div class="flex flex-col z-10 text-white justify-center items-center text-center">
                         <h1 class="DarkerBold text-sm">Address:</h1>
                         <p class="DarkerMedium text-xs leading-tight">{{ $building->building_address }}
                         </p>
+
+
                     </div>
                 </div>
             @endforeach

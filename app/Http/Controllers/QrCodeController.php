@@ -22,6 +22,11 @@ class QrCodeController extends Controller
 {
     public function index(Request $request)
     {
+        if (!Auth::user()->isAdmin && !Auth::user()->can("qr.view")) {
+            Auth::logout();
+            return redirect()->route('sign-in')->withErrors(['message' => 'You do not have access.']);
+        }
+
         if (Auth::user()->isAdmin) {
             $offices = Office::latest()->get();
         } else {
@@ -115,7 +120,7 @@ class QrCodeController extends Controller
         $selectedAll = $request->selected_all;
         $office = Office::find($request->officeId);
         $building = Building::find($request->building_id);
-        if (!$building) {
+        if (!Auth::user()->isAdmin) {
             $building = Building::find(Auth::user()->building_id);
         }
         if (!$building) {
@@ -178,6 +183,10 @@ class QrCodeController extends Controller
     }
     public function downloadQrCode(Request $request, $qrId = null)
     {
+        if (!Auth::user()->isAdmin && !Auth::user()->can("qr.download")) {
+            Auth::logout();
+            return redirect()->route('sign-in')->withErrors(['message' => 'You do not have access.']);
+        }
         $building = Building::find($request->buildingid);
         if ($qrId) {
             $qrCode = QrCode::find($qrId);
@@ -186,7 +195,7 @@ class QrCodeController extends Controller
             }
             $building = Building::find($qrCode->vehicle->office->building_id);
         }
-        if (!$building) {
+        if (!Auth::user()->isAdmin) {
             $building = Building::find(Auth::user()->building_id);
         }
         if (!$building) {

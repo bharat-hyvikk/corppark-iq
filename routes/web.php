@@ -17,6 +17,8 @@ use App\Http\Controllers\OfficeController;
 use App\Http\Controllers\VehicleController;
 use App\Http\Controllers\QrCodeController;
 use App\Http\Middleware\DealerMiddleware;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 /*
 |--------------------------------------------------------------------------
@@ -31,17 +33,17 @@ use App\Http\Middleware\DealerMiddleware;
 
 Route::get('/', function () {
     return redirect('/dashboard');
-})->middleware(['auth','admin']);
+})->middleware(['auth', 'admin']);
 
 Route::get('/dashboard', [DashboardController::class, 'index'])
     ->name('dashboard')
-    ->middleware(['auth','admin']);
+    ->middleware(['auth', 'admin']);
 
 Route::get('/profile', function () {
     return view('account-pages.profile');
 })
     ->name('profile')
-    ->middleware(['auth','admin']);
+    ->middleware(['auth', 'admin']);
 
 Route::get('/signin', function () {
     return view('account-pages.signin');
@@ -60,7 +62,7 @@ Route::get('/sign-in', [LoginController::class, 'create'])
 Route::post('/sign-in', [LoginController::class, 'store'])->middleware('guest');
 
 Route::post('/logout', [LoginController::class, 'destroy'])
-    ->middleware(['auth','admin'])
+    ->middleware(['auth', 'admin'])
     ->name('logout');
 
 Route::get('/forgot-password', [ForgotPasswordController::class, 'create'])
@@ -78,18 +80,18 @@ Route::post('/reset-password', [ResetPasswordController::class, 'store'])->middl
 
 Route::get('user-profile', [ProfileController::class, 'index'])
     ->name('users.profile')
-    ->middleware(['auth','admin']);
+    ->middleware(['auth', 'admin']);
 Route::post('/laravel-examples/user-profile/update', [ProfileController::class, 'update'])
     ->name('admin.update')
-    ->middleware(['auth','admin']);
+    ->middleware(['auth', 'admin']);
 Route::get('/laravel-examples/users-management', [UserController::class, 'index'])
     ->name('users-management')
-    ->middleware(['auth','admin']);
+    ->middleware(['auth', 'admin']);
 // route::get('/dealersmanage', [DealersController::class, 'index'])->name('dealers.manage')->middleware('admin');
 // route::post('/save', [DealersController::class, 'store'])->name('dealers.save')->middleware('admin');
 
 route::prefix('users')
-    ->middleware(['auth','admin'])
+    ->middleware(['auth', 'admin'])
     ->group(function () {
         route::get('manage', [UserController::class, 'index'])->name('users.manage');
         route::post('save', [UserController::class, 'store'])->name('users.save');
@@ -101,7 +103,7 @@ route::prefix('users')
 
 // ** office management
 route::prefix('offices')
-    ->middleware(['auth','admin'])
+    ->middleware(['auth', 'admin'])
     ->group(function () {
         route::get('manage', [OfficeController::class, 'index'])->name('offices.manage');
         route::post('save', [OfficeController::class, 'store'])->name('offices.save');
@@ -112,17 +114,18 @@ route::prefix('offices')
 
 // ** vehicle management
 route::prefix('vehicles')
-    ->middleware(['auth','admin'])
+    ->middleware(['auth', 'admin'])
     ->group(function () {
         route::get('manage', [VehicleController::class, 'index'])->name('vehicles.manage');
         route::post('save', [VehicleController::class, 'store'])->name('vehicles.save');
         route::post('edit', [VehicleController::class, 'edit'])->name('vehicles.edit');
         route::post('update', [VehicleController::class, 'update'])->name('vehicles.update');
         route::post('delete', [VehicleController::class, 'destroy'])->name('vehicles.delete');
+        route::get('getOfficeNames', [VehicleController::class, 'getOfficeNames'])->name('getOfficeNames');
     });
 
 route::prefix('buildings')
-    ->middleware(['auth','admin'])
+    ->middleware(['auth', 'admin'])
     ->group(function () {
         route::get('manage', [BuildingController::class, 'index'])->name('buildings.manage');
         route::post('save', [BuildingController::class, 'store'])->name('buildings.save');
@@ -148,3 +151,19 @@ Route::get('/contact-us', function () {
 
 // send email using contact us controller
 Route::get('/send-email', [ContactUsController::class, 'sendEmail'])->name('send-email');
+
+// Route::get('/setup-manager-permissions', function () {
+//     // Create permissions if not exists
+//     $permissions = ['office.view', 'vehicle.view', 'qr.view','qr.download'];
+//     foreach ($permissions as $perm) {
+//         Permission::firstOrCreate(['name' => $perm, 'guard_name' => 'web']);
+//     }
+
+//     // Create or get role 'manager'
+//     $role = Role::firstOrCreate(['name' => 'manager', 'guard_name' => 'web']);
+
+//     // Assign permissions to role
+//     $role->givePermissionTo($permissions);
+
+//     return 'Permissions assigned to Manager role.';
+// });

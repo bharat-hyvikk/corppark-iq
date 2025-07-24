@@ -45,7 +45,7 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Building::class);
     }
-    
+
 
     // define isManger
     public function getIsManagerAttribute()

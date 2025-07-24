@@ -20,6 +20,10 @@ class  OfficeController extends Controller
 
     public function index(Request $request)
     {
+         if (!Auth::user()->isAdmin && !Auth::user()->can("office.view")) {
+            Auth::logout();
+            return redirect()->route('sign-in')->withErrors(['message' => 'You do not have access.']);
+        }
         if (Auth::user()->isAdmin) {
             $buildings = Building::latest()->get();
         } else {

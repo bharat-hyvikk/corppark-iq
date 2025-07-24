@@ -67,6 +67,13 @@
                     <label class="form-label">Offices Permissions</label>
                     <div class="d-flex gap-2">
                         <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="office.view" id="view"
+                                name="permissions[]">
+                            <label class="form-check-label" for="view">
+                                View
+                            </label>
+                        </div>
+                        <div class="form-check">
                             <input class="form-check-input" type="checkbox" value="office.add" id="add"
                                 name="permissions[]">
                             <label class="form-check-label" for="add">
@@ -94,6 +101,13 @@
                     <label class="form-label">Vehicles Permissions</label>
                     <div class="d-flex gap-2">
                         <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="vehicle.view" id="view"
+                                name="permissions[]">
+                            <label class="form-check-label" for="view">
+                                View
+                            </label>
+                        </div>
+                        <div class="form-check">
                             <input class="form-check-input" type="checkbox" value="vehicle.add" id="add"
                                 name="permissions[]">
                             <label class="form-check-label" for="add">
@@ -103,7 +117,7 @@
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" value="vehicle.update"
                                 id="update" name="permissions[]">
-                            <label class="form-check-label" for="create">
+                            <label class="form-check-label" for="update">
                                 Update
                             </label>
                         </div>
@@ -120,11 +134,25 @@
                 <div class="mb-3 d-none permissions">
                     <label class="form-label">QR Permissions</label>
                     <div class="d-flex gap-2">
+                         <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="qr.view" id="view"
+                                name="permissions[]">
+                            <label class="form-check-label" for="view">
+                                View
+                            </label>
+                        </div>
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" value="qr.generate" id="generate"
                                 name="permissions[]">
                             <label class="form-check-label" for="generate">
                                 Generate
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="qr.download" id="download"
+                                name="permissions[]">
+                            <label class="form-check-label" for="download">
+                                Download
                             </label>
                         </div>
                     </div>

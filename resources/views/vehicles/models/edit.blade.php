@@ -23,6 +23,19 @@
                             class="form-control" autocomplete="">
                         <label class="bg-danger text-white  form-label w-100 mt-2 p-2 d-none" id="edit_phone"></label>
                     </div>
+                    @if (Auth::user()->isAdmin)
+                        <div class="mb-3">
+                            <label class="form-label">Select Building</label>
+                            <select name="building_id" id="building_id" class="form-control">
+                                <option value="" selected disabled>Select Building</option>
+                                @foreach ($buildings as $building)
+                                    <option value="{{ $building->id }}">{{ $building->building_name }}</option>
+                                @endforeach
+                            </select>
+                            <label class="bg-danger text-white  form-label w-100 mt-2 p-2 d-none"
+                                id="edit_building_id"></label>
+                        </div>
+                    @endif
                     <div class="mb-3">
                         <label class="form-label">Select Office</label>
                         <select name="office_id" id="office_id" class="form-control">
@@ -69,11 +82,41 @@
                     $("[name='office_id']").val(response.vehicle.office_id)
                     $("[name='email']").val(response.vehicle.email);
                     $("[name='phone']").val(response.vehicle.owner_phone);
+                    $("[name='building_id']").val(response.vehicle.building_id);
                     $("#editModal").modal("show");
 
                 },
                 error: function(error) {
                     console.log(error);
+                }
+            });
+        });
+
+         $("[name='building_id']").on('change', function() {
+            var building_id = $(this).val();
+            console.log(building_id);
+            $.ajax({
+                url: "{{ route('getOfficeNames') }}",
+                type: 'get',
+                data: {
+                    building_id: building_id
+                },
+                success: function(response) {
+                    let offices = response.offices;
+                    $("[name='office_id']").empty();
+                    $("[name='office_id']").append(
+                        '<option value="">Select Office</option>'
+                    ); // add default option at the top of the dropdown
+                    $("[name='office_id']").removeAttr('disabled');
+                    console.log(response)
+                    $.each(offices, function(index, office) {
+                        $("[name='office_id']").append(
+                            `<option value="${office.id}">${office.office_name}</option>`
+                        );
+                    });
+                    // remove the disabled attribute from the office_id select element
+                    $("[name='office_id']").removeAttr('disabled');
+
                 }
             });
         });

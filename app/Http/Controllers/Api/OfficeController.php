@@ -116,7 +116,6 @@ class OfficeController extends Controller
         $office->space_left = $space_left;
         $office = $office->toArray();
         $office["vehicles"] = $vehicles->toArray();
-        // $data = array_merge($office, $vehicles->toArray());
         return response()->json(
             [
                 "message" => "Office and Vehicles list fetched successfully",

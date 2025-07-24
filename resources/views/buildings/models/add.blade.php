@@ -17,14 +17,14 @@
                         <label class="bg-danger text-white  form-label w-100 mt-2 p-2 d-none"
                             id="add_building_name"></label>
                     </div>
-                      <div class="mb-3 col-6">
+                    <div class="mb-3 col-6">
                         <label for="owner_name" class="form-label">Owner Name</label>
                         <input type="text" class="form-control" name='owner_name' aria-describedby="dealerNameHelp"
                             class="form-control" autocomplete="">
                         <label class="bg-danger text-white  form-label w-100 mt-2 p-2 d-none"
                             id="add_owner_name"></label>
                     </div>
-                     <div class="mb-3 col-6">
+                    <div class="mb-3 col-6">
                         <label for="dealeremail" class="form-label">Owner Email</label>
                         <input type="email" name="email" id="dealeremail" class="form-control">
                         <label class="bg-danger text-white  form-label w-100 mt-2 p-2 d-none" id="add_email"></label>
@@ -61,62 +61,61 @@
     </div>
 </div>
 <script>
-$(document).ready(function () {
-    $("#addBuildingForm").submit(function (event) {
-        event.preventDefault();
+    $(document).ready(function() {
+        $("#addBuildingForm").submit(function(event) {
+            event.preventDefault();
 
-        const form = $(this)[0];
-        const formData = new FormData(form);
+            const form = $(this)[0];
+            const formData = new FormData(form);
 
-        // UI: Disable button and show spinner
-        $('#addBuildingBtn').attr('disabled', true);
-        $('#addBuildingBtn').find('span').text('Submitting');
-        $('#addBuildingBtn').find('i').addClass('fa-spin').show();
+            // UI: Disable button and show spinner
+            $('#addBuildingBtn').attr('disabled', true);
+            $('#addBuildingBtn').find('span').text('Submitting');
+            $('#addBuildingBtn').find('i').addClass('fa-spin').show();
 
-        $.ajax({
-            type: "POST",
-            url: $(this).attr("action"),
-            data: formData,
-            contentType: false,
-            processData: false,
-            success: function (response) {
-                $('#addBuildingBtn').attr('disabled', false);
-                $("#pageHeaderText").text(response.total);
-                $('#addBuildingBtn').find('i').removeClass('fa-spin').hide();
-                $('#addBuildingBtn').find('span').text('Submit');
+            $.ajax({
+                type: "POST",
+                url: $(this).attr("action"),
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function(response) {
+                    $('#addBuildingBtn').attr('disabled', false);
+                    $("#pageHeaderText").text(response.total);
+                    $('#addBuildingBtn').find('i').removeClass('fa-spin').hide();
+                    $('#addBuildingBtn').find('span').text('Submit');
 
-                $('#addModal').modal('hide');
-                $('#addBuildingForm')[0].reset();
-                $("#tableContainer").html(response.table);
-                // console.log(response);
+                    $('#addModal').modal('hide');
+                    $('#addBuildingForm')[0].reset();
+                    $("#tableContainer").html(response.table);
+                    // console.log(response);
 
-                $("#successMsgCustom").text(response.message).show();
-                setTimeout(() => {
-                    $("#successMsgCustom").text('').hide();
-                }, 3000);
-            },
-            error: function (xhr) {
-                const errors = xhr.responseJSON?.errors || {};
-
-                $('#addBuildingBtn').attr('disabled', false);
-                $('#addBuildingBtn').find('i').removeClass('fa-spin').hide();
-                $('#addBuildingBtn').find('span').text('Submit');
-
-                $.each(errors, function (key, message) {
-                    const label = $('#add_' + key);
-                    label.html(message).removeClass('d-none');
+                    $("#successMsgCustom").text(response.message).show();
                     setTimeout(() => {
-                        label.html('').addClass('d-none');
-                    }, 5000);
-                });
+                        $("#successMsgCustom").text('').hide();
+                    }, 3000);
+                },
+                error: function(xhr) {
+                    const errors = xhr.responseJSON?.errors || {};
 
-                $("#errorMsgCustom").html("Failed to add building").show();
-                setTimeout(() => {
-                    $("#errorMsgCustom").html('').hide();
-                }, 3000);
-            }
+                    $('#addBuildingBtn').attr('disabled', false);
+                    $('#addBuildingBtn').find('i').removeClass('fa-spin').hide();
+                    $('#addBuildingBtn').find('span').text('Submit');
+
+                    $.each(errors, function(key, message) {
+                        const label = $('#add_' + key);
+                        label.html(message).removeClass('d-none');
+                        setTimeout(() => {
+                            label.html('').addClass('d-none');
+                        }, 5000);
+                    });
+
+                    // $("#errorMsgCustom").html("Failed to add building").show();
+                    // setTimeout(() => {
+                    //     $("#errorMsgCustom").html('').hide();
+                    // }, 3000);
+                }
+            });
         });
     });
-});
 </script>
-

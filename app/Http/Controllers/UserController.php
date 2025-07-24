@@ -21,6 +21,7 @@ class  UserController extends Controller
     public function index(Request $request)
     {
 
+        
 
         if (Auth::user()->user_type == "2") {
             $users = User::latest()->where("building_id", Auth::user()->building_id)->whereIn("user_type", ["0", "3"]);
