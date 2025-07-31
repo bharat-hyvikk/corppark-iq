@@ -21,8 +21,13 @@ class DashboardController extends Controller
     {
         //
 
-        $totalUsers = User::where("user_type", "0")->count();
         $isAdmin = Auth::user()->isAdmin;
+         if($isAdmin){
+            $totalUsers = User::where("user_type","!=", "1")->count();
+        }else{
+            $totalUsers = User::where("user_type", "0")->count();
+
+        }
         $totalOffices = Office::when(!$isAdmin, function ($query) {
             $building = Building::find(Auth::user()->building_id);
             $query->whereIn('id', $building->offices->pluck('id'));
