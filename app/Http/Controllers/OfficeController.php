@@ -73,7 +73,7 @@ class  OfficeController extends Controller
      */
     public function store(Request $request)
     {
-        if (Auth::user()->user_type == 2) {
+        if (!Auth::user()->isAdmin) {
             $request->merge(['building' => Auth::user()->building_id]);
         }
         $request->validate(
@@ -190,7 +190,7 @@ class  OfficeController extends Controller
     public function update(Request $request)
     {
         // validate data just like in store method
-        if (Auth::user()->user_type == 2) {
+        if (!Auth::user()->isAdmin) {
             $request->merge(['building' => Auth::user()->building_id]);
         }
         $request->validate(
