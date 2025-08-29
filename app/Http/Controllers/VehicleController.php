@@ -226,14 +226,7 @@ class  VehicleController extends Controller
         if (!$vehicle) {
             return response()->json(['error' => 'Vehicle not found'], 404);
         }
-        $office = Office::find($request->office_id);
-        if (!$office) {
-            return response()->json(['error' => 'Office not found'], 404);
-        }
-        // Check if the user has permission to update the vehicle in this office
-        if (!Auth::user()->isAdmin && Auth::user()->building_id != $office->building_id) {
-            return response()->json(['error' => 'You do not have permission to update a vehicle in this office.'], 403);
-        }
+
 
         $request->validate(
             [
@@ -241,9 +234,13 @@ class  VehicleController extends Controller
                 'office_id' => [
                     "required",
                     "exists:offices,id",
-                    function ($attribute, $value, $fail) use ($office, $vehicle) {
-                        if ($office->vehicles()->count() >= $office->vehicle_limit && $office->id != $vehicle->office_id) {
-                            $fail('The office has reached its vehicle limit.');
+                    function ($attribute, $value, $fail) use ($request) {
+                        $vehicle = Vehicle::find($request->id);
+                        $office = Office::find($request->office_id);
+                        if ($vehicle && $office) {
+                            if ($office->vehicles()->count() >= $office->vehicle_limit && $office->id != $vehicle->office_id) {
+                                $fail('The office has reached its vehicle limit.');
+                            }
                         }
                     }
                 ],
@@ -256,10 +253,19 @@ class  VehicleController extends Controller
                 'phone.digits' => 'The Owner phone number must be 10 digits.',
                 'phone.numeric' => 'The Owner phone number must be a number.',
                 'vehicle_number.required' => 'The vehicle number is required.',
+                "office_id.required" => 'The office is required.',
             ]
         );
         // Create a new vehicle
         $vehicle = Vehicle::find($request->id);
+        $office = Office::find($request->office_id);
+        if (!$office) {
+            return response()->json(['error' => 'Office not found'], 404);
+        }
+        // Check if the user has permission to update the vehicle in this office
+        if (!Auth::user()->isAdmin && Auth::user()->building_id != $office->building_id) {
+            return response()->json(['error' => 'You do not have permission to update a vehicle in this office.'], 403);
+        }
         $vehicle->vehicle_number = $request->vehicle_number;
         $vehicle->office_id = $request->office_id;
         $vehicle->owner_phone = $request->phone;
@@ -314,6 +320,7 @@ class  VehicleController extends Controller
             'message' => 'Vehicle updated successfully.',
         ]);
     }
+
 
     /**
      * Remove the specified resource from storage.
