@@ -23,12 +23,19 @@
                         </a>
                     </li>
                 </ul>
-                     <div>
-                    <span class="profile text-nowrap">
-                        {{ auth()->user()->name }}
-                    </span>
-                </div>               
+                <div>
+                    @if (auth()->user()->isAdmin)
+                        <span class="profile text-nowrap">
+                            {{ auth()->user()->name }}
+                        </span>
+                    @else
+                        <span class="profile text-nowrap">
+                            {{ auth()->user()->name }}|{{ auth()->user()->building->building_name }}
+                        </span>
+                    @endif
+
             </div>
         </div>
     </div>
+</div>
 </nav>

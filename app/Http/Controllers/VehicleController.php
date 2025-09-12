@@ -332,7 +332,7 @@ class  VehicleController extends Controller
         if (!$vehicle) {
             return response()->json(['error' => 'Vehicle not found'], 404);
         }
-        if (!Auth::user()->isAdmin && Auth::user()->building_id != $office->building_id) {
+        if (!Auth::user()->isAdmin && Auth::user()->building_id != $vehicle->office->building_id) {
             return response()->json(['error' => 'You do not have permission to delete a vehicle in this office.'], 403);
         }
         $vehicle->qrCode->delete();

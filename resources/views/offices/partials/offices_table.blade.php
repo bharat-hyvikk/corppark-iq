@@ -4,9 +4,11 @@
             <th class="text-secondary text-xs font-weight-semibold opacity-7">
                 Office Name
             </th>
-            <th class="text-secondary text-xs font-weight-semibold opacity-7">
-                Building Name
-            </th>
+            @if (auth()->user()->isAdmin)
+                <th class="text-secondary text-xs font-weight-semibold opacity-7">
+                    Building Name
+                </th>
+            @endif
             <th class="text-secondary text-xs font-weight-semibold opacity-7">
                 Office Number
             </th>
@@ -25,7 +27,7 @@
             <th class="text-secondary text-xs font-weight-semibold opacity-7 ps-3">
                 Email
             </th>
-            @if (auth()->user()->user_type == "1" || auth()->user()->can('office.update') || auth()->user()->can('office.delete'))
+            @if (auth()->user()->user_type == '1' || auth()->user()->can('office.update') || auth()->user()->can('office.delete'))
                 <th class="text-center text-secondary text-xs font-weight-semibold opacity-7">
                     Action
                 </th>
@@ -45,11 +47,13 @@
                         </div>
                     </div>
                 </td>
-                <td class="align-middle text-start text-sm">
-                    <p class="text-sm text-dark font-weight-semibold mb-0 email ps-3">
-                        {{ $Office->building->building_name ?? 'N/A' }}
-                    </p>
-                </td>
+                @if (auth()->user()->isAdmin)
+                    <td class="align-middle text-start text-sm">
+                        <p class="text-sm text-dark font-weight-semibold mb-0 email ps-3">
+                            {{ $Office->building->building_name ?? 'N/A' }}
+                        </p>
+                    </td>
+                @endif
                 <td class="align-middle text-start text-sm">
                     <p class="text-sm text-dark font-weight-semibold mb-0 email ps-3">
                         {{ $Office->office_number }}
@@ -95,9 +99,9 @@
                         {{ $Office->owner_email }}
                     </p>
                 </td>
-                @if (auth()->user()->user_type == "1"|| auth()->user()->can('office.update') || auth()->user()->can('office.delete'))
+                @if (auth()->user()->user_type == '1' || auth()->user()->can('office.update') || auth()->user()->can('office.delete'))
                     <td class="text-center align-middle">
-                        @if (auth()->user()->user_type == "1"|| auth()->user()->can('office.update'))
+                        @if (auth()->user()->user_type == '1' || auth()->user()->can('office.update'))
                             <a href="javascript:;" class="text-secondary font-weight-bold text-xs edit-item"
                                 data-id="{{ $Office->id }}" data-bs-toggle="tooltip" data-bs-title="Edit Office"
                                 data-bs-modal="#editOfficeModal" id="editOfficeBtn">
@@ -109,7 +113,7 @@
                                 </svg>
                             </a>
                         @endif
-                        @if (auth()->user()->user_type == "1" || auth()->user()->can('office.delete'))
+                        @if (auth()->user()->user_type == '1' || auth()->user()->can('office.delete'))
                             <a href="javascript:;" data-id="{{ $Office->id }}"
                                 class="text-secondary font-weight-bold text-xs mx-2 delete-item"
                                 data-bs-toggle="tooltip" data-bs-title="Delete Office" data-bs-toggle="modal"

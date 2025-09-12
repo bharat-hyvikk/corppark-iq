@@ -11,196 +11,42 @@
                             <h3 class="font-weight-bold mb-0">
                                 Welcome {{ auth()->user()->name }}
                             </h3>
-                            @if(auth()->user()->isAdmin)
-                            <p>
-                                See information about Users,Buildings,Offices,Vehicles and QR related Modules.
-                            </p>
+                            @if (auth()->user()->isAdmin)
+                                <p>
+                                    See information about Users,Buildings,Offices,Vehicles and QR related Modules.
+                                </p>
                             @else
-                            <p>
-                                See information about Users,Offices,Vehicles and QR related Modules.
-                            </p>
+                                <p>
+                                    See information about Users,Offices,Vehicles and QR related Modules.
+                                </p>
                             @endif
                         </div>
+                        @if (auth()->user()->isAdmin)
+                            <div class="ms-auto w-20">
+                                <label for="building" class="form-label text-lg">Filter by Building</label>
+                                <select name="buildings" id="select_building" class="form-select form-select-md"
+                                    onchange="filterTable()">
+                                    <option value="">Select Building</option>
+                                    @foreach ($totalBuildings as $building)
+                                        <option value="{{ $building->id }}">{{ $building->building_name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>
             <hr class="my-0" />
-            <div class="row mt-5 justify-content-between">
-                <div class="col-xl-2 col-sm-6 mb-xl-0">
-                    <div class="card border shadow-xs mb-4">
-                        <div class="card-body text-start p-3 w-100">
-                            <div
-                                class="icon icon-shape icon-sm bg-dark text-white text-center border-radius-sm d-flex align-items-center justify-content-center mb-3">
-                                <i class="fa-sharp fa-solid fa-users" aria-hidden="true"
-                                    style="
-                                        font-size: 16px;
-                                        colur: #fff;
-                                        background-color: #1e293b !important;
-                                        opacity: 1;
-                                    "></i>
-                            </div>
-                            <div class="row">
-                                <div class="col-12">
-                                    <div class="w-100">
-                                        <p class="text-sm text-secondary mb-1">
-                                            Users
-                                        </p>
-                                        <h4 class="mb-2 font-weight-bold">
-                                            {{ $totalUsers }}
-                                        </h4>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                @if(Auth::user()->isAdmin)
-                <div class="col-xl-2 col-sm-6 mb-xl-0">
-                    <div class="card border shadow-xs mb-4">
-                        <div class="card-body text-start p-3 w-100">
-                            <div
-                                class="icon icon-shape icon-sm bg-dark text-white text-center border-radius-sm d-flex align-items-center justify-content-center mb-3">
-                                <i class="fa-sharp fa-solid fas far fas fa-briefcase" aria-hidden="true"
-                                    style="
-                                        font-size: 16px;
-                                        colur: #fff;
-                                        background-color: #1e293b !important;
-                                        opacity: 1;
-                                    "></i>
-                            </div>
-                            <div class="row">
-                                <div class="col-12">
-                                    <div class="w-100">
-                                        <p class="text-sm text-secondary mb-1">
-                                            Buildings
-                                        </p>
-                                        <h4 class="mb-2 font-weight-bold">
-                                            {{ $totalBuildings }}
-                                        </h4>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                @endif
-                <div class="col-xl-2 col-sm-6 mb-xl-0">
-                    <div class="card border shadow-xs mb-4">
-                        <div class="card-body text-start p-3 w-100">
-                            <div
-                                class="icon icon-shape icon-sm bg-dark text-white text-center border-radius-sm d-flex align-items-center justify-content-center mb-3">
-                                <i class="fa-sharp fa-solid fas far fas fa-briefcase" aria-hidden="true"
-                                    style="
-                                        font-size: 16px;
-                                        colur: #fff;
-                                        background-color: #1e293b !important;
-                                        opacity: 1;
-                                    "></i>
-                            </div>
-                            <div class="row">
-                                <div class="col-12">
-                                    <div class="w-100">
-                                        <p class="text-sm text-secondary mb-1">
-                                            Offices
-                                        </p>
-                                        <h4 class="mb-2 font-weight-bold">
-                                            {{ $totalOffices }}
-                                        </h4>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xl-2 col-sm-6 mb-xl-0">
-                    <div class="card border shadow-xs mb-4">
-                        <div class="card-body text-start p-3 w-100">
-                            <div
-                                class="icon icon-shape icon-sm bg-dark text-white text-center border-radius-sm d-flex align-items-center justify-content-center mb-3">
-                                <i class="fa-sharp fa-solid far fas fa-car-side" aria-hidden="true"
-                                    style="
-                                        font-size: 16px;
-                                        colur: #fff;
-                                        background-color: #1e293b !important;
-                                        opacity: 1;
-                                    "></i>
-                            </div>
-                            <div class="row">
-                                <div class="col-12">
-                                    <div class="w-100">
-                                        <p class="text-secondary mb-1" style="font-size:13px">
-                                            Vehicles
-                                        </p>
-                                        <h4 class="mb-2 font-weight-bold">{{ $totalVehicles }}</h4>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xl-2 col-sm-6 mb-xl-0">
-                    <div class="card border shadow-xs mb-4">
-                        <div class="card-body text-start p-3 w-100">
-                            <div
-                                class="icon icon-shape icon-sm bg-dark text-white text-center border-radius-sm d-flex align-items-center justify-content-center mb-3">
-                                <i class="fa-sharp fa-solid fas fa-square-parking" aria-hidden="true"
-                                    style="
-                                        font-size: 16px;
-                                        colur: #fff;
-                                        background-color: #1e293b !important;
-                                        opacity: 1;
-                                    "></i>
-                            </div>
-                            <div class="row">
-                                <div class="col-12">
-                                    <div class="w-100">
-                                        <p class="text-sm text-secondary mb-1">
-                                            Total Parked
-                                        </p>
-                                        <h4 class="mb-2 font-weight-bold">
-                                            {{ $totalParked }}
-                                        </h4>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xl-2 col-sm-6 mb-xl-0">
-                    <div class="card border shadow-xs mb-4">
-                        <div class="card-body text-start p-3 w-100">
-                            <div
-                                class="icon icon-shape icon-sm bg-dark text-white text-center border-radius-sm d-flex align-items-center justify-content-center mb-3">
-                                <i class="fa-sharp fa-solid far fa-square-minus" aria-hidden="true"
-                                    style="
-                                        font-size: 16px;
-                                        colur: #fff;
-                                        background-color: #1e293b !important;
-                                        opacity: 1;
-                                    "></i>
-                            </div>
-                            <div class="row">
-                                <div class="col-12">
-                                    <div class="w-100">
-                                        <p class="text-sm text-secondary mb-1">
-                                            Total Remaining
-                                        </p>
-                                        <h4 class="mb-2 font-weight-bold">
-                                            {{ $totalRemaining }}
-                                        </h4>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div class="row mt-5 justify-content-between" id="dashboardCounts">
+                @include('dashboard.partials.dashboard_count')
             </div>
             <div class="row my-4">
                 <div class="col-lg-4 col-md-6 mb-md-0 mb-4">
                     <div class="card shadow-xs border h-100">
                         <div class="card-header pb-0">
                             <h6 class="font-weight-semibold text-lg mb-0">Vehicles and their QR Code Analysis</h6>
-                            <p class="text-sm">Below are the details of total no of Vehicles With Generated QR Code and total No of vehicles Without QR Code </p>
+                            <p class="text-sm">Below are the details of total no of Vehicles With Generated QR Code and
+                                total No of vehicles Without QR Code </p>
 
                         </div>
                         <div class="card-body py-3">
@@ -253,12 +99,12 @@
     let timeout;
     $("#search").on("keyup", function() {
         console.log("search");
-        clearTimeout(timeout);
         timeout = setTimeout(filterTable, 1000);
     });
 
     function filterTable($page = 1) {
         let searchInput = $('#search').val().toLowerCase();
+        let selectedBuilding = $("#select_building").val();
         $.ajax({
             type: "GET",
             url: "dashboard",
@@ -267,6 +113,14 @@
             },
             success: function(response) {
                 $('#contentTable').html(response.table);
+                $('#dashboardCounts').html(response.dashboardCount);
+                //console.log(selectedBuilding)
+                if (selectedBuilding) {
+                    initCharts(response.totalVehicles, response.totalQrGenerated, response
+                        .selectedBuilding);
+                } else if (window.officesQRChartInstance.ctx.canvas.buildingId) {
+                    initCharts(response.totalVehicles, response.totalQrGenerated);
+                }
             },
             error: function(xhr, status, error) {
                 console.log(error);
@@ -274,38 +128,62 @@
         });
 
     }
-        // JavaScript to render pie chart for total schools and branded QR codes
-        const ctx1 = document.getElementById('officesQRChart').getContext('2d');
-        new Chart(ctx1, {
-            type: 'pie',
-            data: {
-                labels: ['Vehicles Without QR', 'Vehicles  With QR'],
-                datasets: [{
-                    label: 'Total Count',
-                    data: [@json($totalVehicles-$totalQrGenerated), @json($totalQrGenerated)], // Pass PHP values
-                    backgroundColor: ['#FF4069', '#36A2EB'],
-                    hoverOffset: 4
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        position: 'top',
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                let label = context.label || '';
-                                if (label) {
-                                    label += ': ';
+    let chart = null;
+
+    function initCharts(totalVehicles, totalQrGenerated, selectedBuilding = null) {
+        const ctx1 = document.getElementById('officesQRChart');
+        if (selectedBuilding && ctx1.buildingId == selectedBuilding.id) {
+            return;
+        }
+        if (selectedBuilding) {
+            ctx1.buildingId = selectedBuilding.id;
+        } else {
+            delete ctx1.buildingId;
+        }
+        if (ctx1) {
+            // destroy old chart if exists (important to avoid duplicates)
+            if (window.officesQRChartInstance) {
+                window.officesQRChartInstance.destroy();
+
+            }
+            window.officesQRChartInstance = new Chart(ctx1.getContext('2d'), {
+                type: 'pie',
+                data: {
+                    labels: ['Vehicles Without QR', 'Vehicles With QR'],
+                    datasets: [{
+                        label: 'Total Count',
+                        data: [totalVehicles - totalQrGenerated,
+                            totalQrGenerated
+                        ], // set values dynamically
+                        backgroundColor: ['#FF4069', '#36A2EB'],
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    label += context.raw;
+                                    return label;
                                 }
-                                label += context.raw;
-                                return label;
                             }
                         }
                     }
                 }
-            }
-        });
+            });
+        }
+    }
+
+    let totalVehicles = @json($totalVehicles);
+    let totalQrGenerated = @json($totalQrGenerated);
+    initCharts(totalVehicles, totalQrGenerated);
 </script>

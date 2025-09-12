@@ -123,7 +123,7 @@
                                             </span>
                                             <span class="btn-inner--text">Download Bulk QR</span>
                                         </a>
-                                    @elseif(Auth::user()->can("qr.download"))
+                                    @elseif(Auth::user()->can('qr.download'))
                                         <a href="{{ route('qrcode.download', ['officeName' => request()->route('officeName'), 'officeId' => request()->query('id')]) }}"
                                             class="btn btn-sm btn-dark btn-icon me-2">
                                             <span class="btn-inner--icon">
@@ -133,18 +133,18 @@
                                             <span class="btn-inner--text">Download Bulk QR</span>
                                         </a>
                                     @endif
-                                    @if(Auth::user()->isAdmin || Auth::user()->can("qr.generate"))
-                                    <button type="submit"
-                                        class="btn btn-sm btn-dark btn-icon me-2 d-flex align-items-center"
-                                        data-bs-toggle="modal" data-bs-target="#generateQRModal">
-                                        <span class="btn-inner--icon">
-                                            <i class="fa-sharp fa-solid fa-qrcode" id="qrIcon"
-                                                style="font-size: 0.75rem; margin-right: 0.2rem;"></i>
-                                        </span>
-                                        <i class="fa-solid fa-spinner fa-spin" id="qrSpinner"
-                                            style="display: none; font-size: 0.75rem; margin-right: 0.2rem;"></i>
-                                        <span class="btn-inner--text" id="qrBtnText">Generate Bulk QR</span>
-                                    </button>
+                                    @if (Auth::user()->isAdmin || Auth::user()->can('qr.generate'))
+                                        <button type="submit"
+                                            class="btn btn-sm btn-dark btn-icon me-2 d-flex align-items-center"
+                                            data-bs-toggle="modal" data-bs-target="#generateQRModal">
+                                            <span class="btn-inner--icon">
+                                                <i class="fa-sharp fa-solid fa-qrcode" id="qrIcon"
+                                                    style="font-size: 0.75rem; margin-right: 0.2rem;"></i>
+                                            </span>
+                                            <i class="fa-solid fa-spinner fa-spin" id="qrSpinner"
+                                                style="display: none; font-size: 0.75rem; margin-right: 0.2rem;"></i>
+                                            <span class="btn-inner--text" id="qrBtnText">Generate Bulk QR</span>
+                                        </button>
                                     @endif
                                 </div>
                             </div>
@@ -403,6 +403,7 @@
             console.log(selectedVehicles);
             let officeName = $("#office-select").val();
             let id = "{{ request()->query('id') }}";
+            let building_id = $("#building-select").val();
             $.ajax({
                 url: "{{ route('qrcode.index', ['officeName' => request()->route('officeName')]) }}",
                 type: 'GET',
@@ -412,6 +413,7 @@
                     filter: filter,
                     page: page,
                     id: id,
+                    buildingid: building_id,
                 }, // Added comma here
                 success: function(response) {
                     $('#Table').html(response.html);

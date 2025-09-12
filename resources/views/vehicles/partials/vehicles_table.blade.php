@@ -7,10 +7,11 @@
             <th class="text-secondary text-xs font-weight-semibold opacity-7">
                 Office Name
             </th>
-            <th class="text-secondary text-xs font-weight-semibold opacity-7">
-                Building Name
-            </th>
-
+            @if (auth()->user()->isAdmin)
+                <th class="text-secondary text-xs font-weight-semibold opacity-7">
+                    Building Name
+                </th>
+            @endif
             <th class="text-secondary text-xs font-weight-semibold opacity-7">
                 Owner Number
             </th>
@@ -48,13 +49,13 @@
                         {{ $vehicle->office->office_name ?? 'NA' }}
                     </p>
                 </td>
-
-                <td class="align-middle text-start text-sm">
-                    <p class="text-sm text-dark font-weight-semibold mb-0 email ps-3">
-                        {{ $vehicle->office->building->building_name ?? 'NA' }}
-                    </p>
-                </td>
-
+                @if (auth()->user()->isAdmin)
+                    <td class="align-middle text-start text-sm">
+                        <p class="text-sm text-dark font-weight-semibold mb-0 email ps-3">
+                            {{ $vehicle->office->building->building_name ?? 'NA' }}
+                        </p>
+                    </td>
+                @endif
 
                 <td class="align-middle text-start text-sm">
                     <p class="text-sm text-dark font-weight-semibold mb-0 email ps-3">

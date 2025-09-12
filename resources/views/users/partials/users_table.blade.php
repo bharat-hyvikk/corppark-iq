@@ -7,9 +7,11 @@
             <th class="text-secondary text-xs font-weight-semibold opacity-7">
                 User Type
             </th>
-            <th class="text-secondary text-xs font-weight-semibold opacity-7">
-                Building Name
-            </th>
+            @if (auth()->user()->isAdmin)
+                <th class="text-secondary text-xs font-weight-semibold opacity-7">
+                    Building Name
+                </th>
+            @endif
             <th class="text-secondary text-xs font-weight-semibold opacity-7 ps-3">
                 Status
             </th>
@@ -43,12 +45,13 @@
                         {{ $user->user_type == 0 ? 'Guard' : ($user->user_type == 2 ? 'Manager' : 'Sub Manager') }}
                     </p>
                 </td>
-                <td class="align-middle text-start text-sm">
-                    <p class="text-sm text-dark font-weight-semibold mb-0 email ps-3">
-                        {{ $user->building->building_name ?? 'NA' }}
-                    </p>
-                </td>
-
+                @if (auth()->user()->isAdmin)
+                    <td class="align-middle text-start text-sm">
+                        <p class="text-sm text-dark font-weight-semibold mb-0 email ps-3">
+                            {{ $user->building->building_name ?? 'NA' }}
+                        </p>
+                    </td>
+                @endif
 
                 <td class="align-middle text-start text-sm">
                     <a href="javascript:;" data-id="{{ $user->id }}"

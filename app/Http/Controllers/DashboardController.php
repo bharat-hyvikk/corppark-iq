@@ -21,34 +21,44 @@ class DashboardController extends Controller
     {
         //
 
-        $isAdmin = Auth::user()->isAdmin;
-         if($isAdmin){
-            $totalUsers = User::where("user_type","!=", "1")->count();
-        }else{
-            $totalUsers = User::where("user_type", "0")->count();
-
-        }
-        $totalOffices = Office::when(!$isAdmin, function ($query) {
+        if ($request->building_id) {
+            $building = Building::find($request->building_id);
+        } else if (!Auth::user()->isAdmin) {
             $building = Building::find(Auth::user()->building_id);
+        } else {
+            $building = null;
+        }
+
+        $isAdmin = Auth::user()->isAdmin;
+        // if ($isAdmin) {
+        //     $totalUsers = User::where("user_type", "!=", "1")->count();
+        // } else {
+        //     $totalUsers = User::where("user_type", "0")->count();
+        // }
+        $totalUsers = User::when($building, function ($query) use ($building) {
+            $query->where('building_id', $building->id);
+        })->whereNotNull("building_id")->count();
+
+
+
+
+
+        $totalOffices = Office::when($building, function ($query) use ($building) {
             $query->whereIn('id', $building->offices->pluck('id'));
         })->count();
-        $totalBuildings = Building::count();
+        $totalBuildings = Building::latest()->get();
 
-        $totalVehicles = Vehicle::when(!$isAdmin, function ($query) {
-            $building = Building::find(Auth::user()->building_id);
+        $totalVehicles = Vehicle::when($building, function ($query) use ($building) {
             $query->whereIn('id', $building->vehicles->pluck("id"));
         })->count();
-        $totalParked = Vehicle::when(!$isAdmin, function ($query) {
-            $building = Building::find(Auth::user()->building_id);
+        $totalParked = Vehicle::when($building, function ($query) use ($building) {
             $query->whereIn('id', $building->vehicles->pluck("id"));
         })->where("check_in_status", "Parked")->count();
-        $totalLimit = Office::when(!$isAdmin, function ($query) {
-            $building = Building::find(Auth::user()->building_id);
+        $totalLimit = Office::when($building, function ($query) use ($building) {
             $query->whereIn('id', $building->offices->pluck('id'));
         })->sum('vehicle_limit');
         $totalRemaining = $totalLimit - $totalParked;
-        $recentInsideVehicles = Vehicle::when(!$isAdmin, function ($query) {
-            $building = Building::find(Auth::user()->building_id);
+        $recentInsideVehicles = Vehicle::when($building, function ($query) use ($building) {
             $query->whereIn('id', $building->vehicles->pluck("id"));
         })->where('check_in_status', 'Parked')
             ->whereNotNull('check_in_time')
@@ -59,14 +69,12 @@ class DashboardController extends Controller
 
 
         // Remaining offices
-        $totalQrGenerated = QrCode::when(!$isAdmin, function ($query) {
-            $building = Building::find(Auth::user()->building_id);
+        $totalQrGenerated = QrCode::when($building, function ($query) use ($building) {
             $query->whereIn('office_id', $building->offices->pluck("id"));
         })->distinct("vehicle_id")->count();
-       
 
-        $recentOutsideVehicles = Vehicle::when(!$isAdmin, function ($query) {
-            $building = Building::find(Auth::user()->building_id);
+
+        $recentOutsideVehicles = Vehicle::when($building, function ($query) use ($building) {
             $query->whereIn('id', $building->vehicles->pluck("id"));
         })->where('check_in_status', 'Not Parked')
             ->whereNotNull('check_out_time')
@@ -74,14 +82,13 @@ class DashboardController extends Controller
             ->limit(5)
             // ->with('office')
             ->get();
-        // merge both into one vehicles collection
         $vehicles = $recentInsideVehicles->merge($recentOutsideVehicles);
         $search = $request->search;
+        $selectedBuilding = $building;
+
         if ($request->ajax()) {
+            $dashboardCount = view('dashboard.partials.dashboard_count', compact('totalUsers', 'totalOffices', 'totalVehicles', 'totalParked', 'totalRemaining', 'totalQrGenerated', 'totalBuildings', 'selectedBuilding'))->render();
             if (!empty($search)) {
-                // $vehicles = $vehicles->filter(function ($vehicle) use ($search) {
-                //     return (stripos($vehicle->vehicle_number, $search) !== false) || (stripos($vehicle->office->office_name, $search) !== false);
-                // });
                 $vehicles = $vehicles->filter(function ($vehicle) use ($search) {
                     return stripos($vehicle->vehicle_number, $search) !== false;
                 });
@@ -89,8 +96,12 @@ class DashboardController extends Controller
             $table = view('dashboard.partials.recent_check_in__table', compact('vehicles'))->render();
             return response()->json([
                 'table' => $table,
+                'dashboardCount' => $dashboardCount,
+                'totalQrGenerated' => $totalQrGenerated,
+                'totalVehicles' => $totalVehicles,
+                'selectedBuilding' => $selectedBuilding,
             ]);
         }
-        return view('dashboard.dashboard', compact('totalUsers', 'totalOffices', 'totalVehicles', 'totalParked', 'totalRemaining', 'vehicles', 'totalQrGenerated', 'totalBuildings'));
+        return view('dashboard.dashboard', compact('totalUsers', 'totalOffices', 'totalVehicles', 'totalParked', 'totalRemaining', 'vehicles', 'totalQrGenerated', 'totalBuildings', 'selectedBuilding'));
     }
 }

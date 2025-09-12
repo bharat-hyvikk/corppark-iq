@@ -76,10 +76,10 @@ class  UserController extends Controller
             [
                 'name' => 'required|string|max:255',
                 'email' => 'required|email|unique:users,email',
-                'password' => [
-                    'required',
-                    'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{10,}$/'
-                ],
+                    'password' => [
+                        'required',
+                        'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/'
+                    ],
                 'phone' => 'required|numeric|digits:10|unique:users,phone',
                 'user_type' => [
                     "required",
@@ -240,7 +240,7 @@ class  UserController extends Controller
                 'email' => 'required|email|unique:users,email,' . $request->id,
                 'password' => [
                     'nullable',
-                    'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{10,}$/'
+                    'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/'
                 ],
                 'phone' => 'required|numeric|digits:10|unique:users,phone,' . $request->id,
                 'building' => "required|exists:building,id",
